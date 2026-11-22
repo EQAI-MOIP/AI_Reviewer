@@ -1,0 +1,1175 @@
+TAP version 13
+# Subtest: v3 default generation reserves 32768 output tokens in a 128000 total budget
+ok 1 - v3 default generation reserves 32768 output tokens in a 128000 total budget
+  ---
+  duration_ms: 9.097499
+  type: 'test'
+  ...
+# Subtest: v3 never silently reduces an invalid output reservation
+ok 2 - v3 never silently reduces an invalid output reservation
+  ---
+  duration_ms: 1.058068
+  type: 'test'
+  ...
+# Subtest: Responses token truncation preserves reason and usage while refusing partial JSON
+ok 3 - Responses token truncation preserves reason and usage while refusing partial JSON
+  ---
+  duration_ms: 1.450961
+  type: 'test'
+  ...
+# Subtest: other incomplete responses are not misreported as recoverable output truncation
+ok 4 - other incomplete responses are not misreported as recoverable output truncation
+  ---
+  duration_ms: 1.204309
+  type: 'test'
+  ...
+# Subtest: unread HTTP failure body is cancelled and never exposed as an error message
+ok 5 - unread HTTP failure body is cancelled and never exposed as an error message
+  ---
+  duration_ms: 2.162877
+  type: 'test'
+  ...
+# Subtest: explicit PDF capability test sends a valid synthetic PDF and verifies actual marker
+ok 6 - explicit PDF capability test sends a valid synthetic PDF and verifies actual marker
+  ---
+  duration_ms: 2.177609
+  type: 'test'
+  ...
+# Subtest: capability checks reject a hallucinated marker and block PDF in Chat before transmission
+ok 7 - capability checks reject a hallucinated marker and block PDF in Chat before transmission
+  ---
+  duration_ms: 1.750874
+  type: 'test'
+  ...
+# Subtest: local relay advertises v3, keeps missing assets 404, and rejects invalid timeout settings
+ok 8 - local relay advertises v3, keeps missing assets 404, and rejects invalid timeout settings
+  ---
+  duration_ms: 54.058741
+  type: 'test'
+  ...
+# Subtest: application number accepts formatting but rejects contamination
+ok 9 - application number accepts formatting but rejects contamination
+  ---
+  duration_ms: 2.710884
+  type: 'test'
+  ...
+# Subtest: endpoint adaptation preserves a configured path, avoids duplicated endpoints, never invents a model endpoint
+ok 10 - endpoint adaptation preserves a configured path, avoids duplicated endpoints, never invents a model endpoint
+  ---
+  duration_ms: 0.7546
+  type: 'test'
+  ...
+# Subtest: XML rejects DTD, malformed documents and explicit API errors
+ok 11 - XML rejects DTD, malformed documents and explicit API errors
+  ---
+  duration_ms: 1.471101
+  type: 'test'
+  ...
+# Subtest: XML parses repeated records, namespace, CDATA and encoded markup
+ok 12 - XML parses repeated records, namespace, CDATA and encoded markup
+  ---
+  duration_ms: 0.699576
+  type: 'test'
+  ...
+# Subtest: pagination reads every page and detects a repeated response
+ok 13 - pagination reads every page and detects a repeated response
+  ---
+  duration_ms: 9.739519
+  type: 'test'
+  ...
+# Subtest: claim reconstruction keeps earlier unchanged claims and does not retroactively apply later amendments
+ok 14 - claim reconstruction keeps earlier unchanged claims and does not retroactively apply later amendments
+  ---
+  duration_ms: 8.214876
+  type: 'test'
+  ...
+# Subtest: claim reconstruction fails closed when initial text or update type is unknown
+ok 15 - claim reconstruction fails closed when initial text or update type is unknown
+  ---
+  duration_ms: 0.269857
+  type: 'test'
+  ...
+# Subtest: Responses uses exact count before generation and correct output parameter
+ok 16 - Responses uses exact count before generation and correct output parameter
+  ---
+  duration_ms: 2.870545
+  type: 'test'
+  ...
+# Subtest: 50k includes input, reserved output and safety margin; oversize request never generates
+ok 17 - 50k includes input, reserved output and safety margin; oversize request never generates
+  ---
+  duration_ms: 0.985889
+  type: 'test'
+  ...
+# Subtest: failed token count never falls back to a guessed PDF budget
+ok 18 - failed token count never falls back to a guessed PDF budget
+  ---
+  duration_ms: 1.418472
+  type: 'test'
+  ...
+# Subtest: PDF uses proper Responses input_file shape in token count and create
+ok 19 - PDF uses proper Responses input_file shape in token count and create
+  ---
+  duration_ms: 1.188816
+  type: 'test'
+  ...
+# Subtest: Chat uses a separate shape and max_completion_tokens, text estimate stays under budget
+ok 20 - Chat uses a separate shape and max_completion_tokens, text estimate stays under budget
+  ---
+  duration_ms: 0.691545
+  type: 'test'
+  ...
+# Subtest: required exact token counting is not silently ignored in Chat mode
+ok 21 - required exact token counting is not silently ignored in Chat mode
+  ---
+  duration_ms: 0.354135
+  type: 'test'
+  ...
+# Subtest: a configured direct KIPRIS prefix is honored and relay never silently substitutes another base
+ok 22 - a configured direct KIPRIS prefix is honored and relay never silently substitutes another base
+  ---
+  duration_ms: 0.734879
+  type: 'test'
+  ...
+# Subtest: both endpoint modes reject truncated or refused output
+ok 23 - both endpoint modes reject truncated or refused output
+  ---
+  duration_ms: 2.21821
+  type: 'test'
+  ...
+# Subtest: remote error bodies never expose keys or signed URLs
+ok 24 - remote error bodies never expose keys or signed URLs
+  ---
+  duration_ms: 0.480966
+  type: 'test'
+  ...
+# Subtest: network failures remain collection failures, never a complete no-document result
+ok 25 - network failures remain collection failures, never a complete no-document result
+  ---
+  duration_ms: 2.929695
+  type: 'test'
+  ...
+# Subtest: cancellation exposes already acquired history for the UI to retain
+ok 26 - cancellation exposes already acquired history for the UI to retain
+  ---
+  duration_ms: 1.128284
+  type: 'test'
+  ...
+# Subtest: PDF downloads use HTTPS official host only
+ok 27 - PDF downloads use HTTPS official host only
+  ---
+  duration_ms: 0.344821
+  type: 'test'
+  ...
+# Subtest: citation parser distinguishes publication, registration and application number
+ok 28 - citation parser distinguishes publication, registration and application number
+  ---
+  duration_ms: 0.499024
+  type: 'test'
+  ...
+# Subtest: cited original is downloaded using matched actual application number, never the publication number
+ok 29 - cited original is downloaded using matched actual application number, never the publication number
+  ---
+  duration_ms: 16.352435
+  type: 'test'
+  ...
+# Subtest: cited original with unsupported country is accurately reported as not attempted
+ok 30 - cited original with unsupported country is accurately reported as not attempted
+  ---
+  duration_ms: 0.237789
+  type: 'test'
+  ...
+# Subtest: relay rejects private, loopback, metadata and reserved public-target addresses
+ok 31 - relay rejects private, loopback, metadata and reserved public-target addresses
+  ---
+  duration_ms: 7.745187
+  type: 'test'
+  ...
+# Subtest: relay pins resolved addresses and rejects mixed-public/private DNS before network
+ok 32 - relay pins resolved addresses and rejects mixed-public/private DNS before network
+  ---
+  duration_ms: 0.508798
+  type: 'test'
+  ...
+# Subtest: relay target validation distinguishes local opt-in and disallows generic proxy paths
+ok 33 - relay target validation distinguishes local opt-in and disallows generic proxy paths
+  ---
+  duration_ms: 0.153602
+  type: 'test'
+  ...
+# Subtest: live loopback relay enforces token, Origin, Host and no external CORS access
+ok 34 - live loopback relay enforces token, Origin, Host and no external CORS access
+  ---
+  duration_ms: 39.803902
+  type: 'test'
+  ...
+# Subtest: relay validates KIPRIS operation parameters and keeps selector fields distinct
+ok 35 - relay validates KIPRIS operation parameters and keeps selector fields distinct
+  ---
+  duration_ms: 16.788955
+  type: 'test'
+  ...
+# Subtest: browser adapter → relay → actual local model completes count and generation without third-party code
+ok 36 - browser adapter → relay → actual local model completes count and generation without third-party code
+  ---
+  duration_ms: 19.743618
+  type: 'test'
+  ...
+# Subtest: manual document review accepts no application number and no KIPRIS key
+ok 37 - manual document review accepts no application number and no KIPRIS key
+  ---
+  duration_ms: 65.389132
+  type: 'test'
+  ...
+# Subtest: case-number adoption checks actual first-page labels before changing any state
+ok 38 - case-number adoption checks actual first-page labels before changing any state
+  ---
+  duration_ms: 5.428564
+  type: 'test'
+  ...
+# Subtest: mixed first-page application numbers in an unnamed case cannot establish a complete packet
+ok 39 - mixed first-page application numbers in an unnamed case cannot establish a complete packet
+  ---
+  duration_ms: 6.394978
+  type: 'test'
+  ...
+# Subtest: removing a source invalidates its versions, prior coverage, and source-dependent decisions
+ok 40 - removing a source invalidates its versions, prior coverage, and source-dependent decisions
+  ---
+  duration_ms: 3.376209
+  type: 'test'
+  ...
+# Subtest: a reviewer cannot override missing identity or unread source pages at finding level
+ok 41 - a reviewer cannot override missing identity or unread source pages at finding level
+  ---
+  duration_ms: 2.316087
+  type: 'test'
+  ...
+# Subtest: real quotations from an unrelated target or future notice cannot confirm the current notice
+ok 42 - real quotations from an unrelated target or future notice cannot confirm the current notice
+  ---
+  duration_ms: 0.33815
+  type: 'test'
+  ...
+# Subtest: missing information cannot coexist with a confirmed code even if the quote exists
+ok 43 - missing information cannot coexist with a confirmed code even if the quote exists
+  ---
+  duration_ms: 0.358311
+  type: 'test'
+  ...
+# Subtest: duplicate same-day versions and explicitly mapped public snapshots are not selected
+ok 44 - duplicate same-day versions and explicitly mapped public snapshots are not selected
+  ---
+  duration_ms: 12.9054
+  type: 'test'
+  ...
+# Subtest: invalid calendar dates cannot become a chronology or claim-version basis
+ok 45 - invalid calendar dates cannot become a chronology or claim-version basis
+  ---
+  duration_ms: 3.573707
+  type: 'test'
+  ...
+# Subtest: scope confirmation cannot fabricate complete API or imported claim versions
+ok 46 - scope confirmation cannot fabricate complete API or imported claim versions
+  ---
+  duration_ms: 1.355036
+  type: 'test'
+  ...
+# Subtest: a registration header without actual claims cannot establish registered-claim completeness
+ok 47 - a registration header without actual claims cannot establish registered-claim completeness
+  ---
+  duration_ms: 6.964263
+  type: 'test'
+  ...
+# Subtest: final notice review receives both earlier and current claim-version text
+ok 48 - final notice review receives both earlier and current claim-version text
+  ---
+  duration_ms: 8.871838
+  type: 'test'
+  ...
+# Subtest: OA-15 code confirmation requires actual cited before-and-after versions
+ok 49 - OA-15 code confirmation requires actual cited before-and-after versions
+  ---
+  duration_ms: 3.44328
+  type: 'test'
+  ...
+# Subtest: local registration checks ignore preferred words in superseded claim documents
+ok 50 - local registration checks ignore preferred words in superseded claim documents
+  ---
+  duration_ms: 1.245061
+  type: 'test'
+  ...
+# Subtest: claim relation analysis finds missing/forward references and indirect multiple dependency
+ok 51 - claim relation analysis finds missing/forward references and indirect multiple dependency
+  ---
+  duration_ms: 0.832077
+  type: 'test'
+  ...
+# Subtest: offline structural findings remain conditional and preserve exact source quotation
+ok 52 - offline structural findings remain conditional and preserve exact source quotation
+  ---
+  duration_ms: 1.170808
+  type: 'test'
+  ...
+# Subtest: manual missing-source requests never call KIPRIS automatically, even with a saved key
+ok 53 - manual missing-source requests never call KIPRIS automatically, even with a saved key
+  ---
+  duration_ms: 3.15864
+  type: 'test'
+  ...
+# Subtest: contradictory not-applicable findings are rejected and document-code families are enforced
+ok 54 - contradictory not-applicable findings are rejected and document-code families are enforced
+  ---
+  duration_ms: 2.501448
+  type: 'test'
+  ...
+# Subtest: adding a document invalidates prior outcome findings and rejects a different primary application
+ok 55 - adding a document invalidates prior outcome findings and rejects a different primary application
+  ---
+  duration_ms: 1.31774
+  type: 'test'
+  ...
+# Subtest: suggested metadata cannot verify itself until the actual metadata is reviewed
+ok 56 - suggested metadata cannot verify itself until the actual metadata is reviewed
+  ---
+  duration_ms: 12.334047
+  type: 'test'
+  ...
+# Subtest: reviewer exclusion is reasoned, auditable, and does not complete unreviewed rules
+ok 57 - reviewer exclusion is reasoned, auditable, and does not complete unreviewed rules
+  ---
+  duration_ms: 2.080061
+  type: 'test'
+  ...
+# Subtest: exclusion export still omits unretained registration-decision original quotes
+ok 58 - exclusion export still omits unretained registration-decision original quotes
+  ---
+  duration_ms: 0.448357
+  type: 'test'
+  ...
+# Subtest: native document synthetic pages remain nonphysical through confirmation, export, import, and reparse
+ok 59 - native document synthetic pages remain nonphysical through confirmation, export, import, and reparse
+  ---
+  duration_ms: 5.319864
+  type: 'test'
+  ...
+# Subtest: v3 limits every first review batch to three rules and recovers truncated groups
+ok 60 - v3 limits every first review batch to three rules and recovers truncated groups
+  ---
+  duration_ms: 19.710808
+  type: 'test'
+  ...
+# Subtest: one truncated rule remains pending while sibling and later rules still run
+ok 61 - one truncated rule remains pending while sibling and later rules still run
+  ---
+  duration_ms: 6.767991
+  type: 'test'
+  ...
+# Subtest: declared scopeComplete cannot hide an explicit missing original request
+ok 62 - declared scopeComplete cannot hide an explicit missing original request
+  ---
+  duration_ms: 2.96022
+  type: 'test'
+  ...
+# Subtest: explicit per-rule claim omissions prevent an otherwise complete packet from clearing
+ok 63 - explicit per-rule claim omissions prevent an otherwise complete packet from clearing
+  ---
+  duration_ms: 3.459886
+  type: 'test'
+  ...
+# Subtest: a claimed confirmed finding is subjected to a separate evidenced counterargument pass
+ok 64 - a claimed confirmed finding is subjected to a separate evidenced counterargument pass
+  ---
+  duration_ms: 9.751617
+  type: 'test'
+  ...
+# Subtest: a counterargument disagreement preserves the original candidate and evidence as conditional
+ok 65 - a counterargument disagreement preserves the original candidate and evidence as conditional
+  ---
+  duration_ms: 2.042725
+  type: 'test'
+  ...
+# Subtest: a hallucinated quote in the second pass cannot support the initial finding
+ok 66 - a hallucinated quote in the second pass cannot support the initial finding
+  ---
+  duration_ms: 2.064888
+  type: 'test'
+  ...
+# Subtest: request cap stops new network calls and exposes every skipped rule
+ok 67 - request cap stops new network calls and exposes every skipped rule
+  ---
+  duration_ms: 1.705085
+  type: 'test'
+  ...
+# Subtest: PDF transcription uses adaptive page windows and keeps visual verification pending
+ok 68 - PDF transcription uses adaptive page windows and keeps visual verification pending
+  ---
+  duration_ms: 2.602801
+  type: 'test'
+  ...
+# Subtest: one failed PDF page preserves local text and cannot be checkbox-promoted
+ok 69 - one failed PDF page preserves local text and cannot be checkbox-promoted
+  ---
+  duration_ms: 2.971728
+  type: 'test'
+  ...
+# Subtest: recovered PDF ordering and parser omitted content stay visible and prevent full verification
+ok 70 - recovered PDF ordering and parser omitted content stay visible and prevent full verification
+  ---
+  duration_ms: 20.547531
+  type: 'test'
+  ...
+# Subtest: raw byte limits prevent a new file from exceeding a case memory budget
+ok 71 - raw byte limits prevent a new file from exceeding a case memory budget
+  ---
+  duration_ms: 0.392403
+  type: 'test'
+  ...
+# Subtest: version 3 exports execution counts and counterargument records without request payloads
+ok 72 - version 3 exports execution counts and counterargument records without request payloads
+  ---
+  duration_ms: 2.462439
+  type: 'test'
+  ...
+# Subtest: omitted checkedClaims cannot yield all-clear even when every check claims none
+ok 73 - omitted checkedClaims cannot yield all-clear even when every check claims none
+  ---
+  duration_ms: 2.644814
+  type: 'test'
+  ...
+# Subtest: a finding from an incomplete claim check cannot be promoted by a supported second pass
+ok 74 - a finding from an incomplete claim check cannot be promoted by a supported second pass
+  ---
+  duration_ms: 3.036035
+  type: 'test'
+  ...
+# Subtest: ordinary PDF retry reads only failed pages and resolves prior failures without repeating successful pages
+ok 75 - ordinary PDF retry reads only failed pages and resolves prior failures without repeating successful pages
+  ---
+  duration_ms: 1.250278
+  type: 'test'
+  ...
+# Subtest: ordinary PDF retry also revisits uncertain transcription while retaining prior complete pages
+ok 76 - ordinary PDF retry also revisits uncertain transcription while retaining prior complete pages
+  ---
+  duration_ms: 0.800238
+  type: 'test'
+  ...
+# Subtest: oversized binary export fails before Base64 allocation and leaves current documents intact
+ok 77 - oversized binary export fails before Base64 allocation and leaves current documents intact
+  ---
+  duration_ms: 0.306433
+  type: 'test'
+  ...
+# Subtest: initial and synthetic status wording are exact, and synthetic cases are labeled
+ok 78 - initial and synthetic status wording are exact, and synthetic cases are labeled
+  ---
+  duration_ms: 6.324061
+  type: 'test'
+  ...
+# Subtest: manual text is split by explicit page markers and UTF-8 bytes are hashed
+ok 79 - manual text is split by explicit page markers and UTF-8 bytes are hashed
+  ---
+  duration_ms: 16.27595
+  type: 'test'
+  ...
+# Subtest: unrelated numbers cannot be joined into a false first-page identity match
+ok 80 - unrelated numbers cannot be joined into a false first-page identity match
+  ---
+  duration_ms: 0.843354
+  type: 'test'
+  ...
+# Subtest: a PDF signature and text extraction do not establish document identity
+ok 81 - a PDF signature and text extraction do not establish document identity
+  ---
+  duration_ms: 2.759157
+  type: 'test'
+  ...
+# Subtest: published or registered snapshots are never reused as a prior office-action version
+ok 82 - published or registered snapshots are never reused as a prior office-action version
+  ---
+  duration_ms: 0.557682
+  type: 'test'
+  ...
+# Subtest: exact quote and page are mandatory and hallucinated quotes cannot be reviewer-overridden
+ok 83 - exact quote and page are mandatory and hallucinated quotes cannot be reviewer-overridden
+  ---
+  duration_ms: 3.711014
+  type: 'test'
+  ...
+# Subtest: a model cannot self-assert substantive legal verification flags
+ok 84 - a model cannot self-assert substantive legal verification flags
+  ---
+  duration_ms: 1.766608
+  type: 'test'
+  ...
+# Subtest: missing, duplicate, unknown checks and unknown codes reject model output
+ok 85 - missing, duplicate, unknown checks and unknown codes reject model output
+  ---
+  duration_ms: 1.208034
+  type: 'test'
+  ...
+# Subtest: complete manual packet and all applicable rule checks can yield a bounded all-clear
+ok 86 - complete manual packet and all applicable rule checks can yield a bounded all-clear
+  ---
+  duration_ms: 10.172412
+  type: 'test'
+  ...
+# Subtest: a missing history document prevents all-clear even if the model claims none
+ok 87 - a missing history document prevents all-clear even if the model claims none
+  ---
+  duration_ms: 2.494717
+  type: 'test'
+  ...
+# Subtest: unread images, unverified laws, and missing model rule outputs each keep review on hold
+ok 88 - unread images, unverified laws, and missing model rule outputs each keep review on hold
+  ---
+  duration_ms: 5.551554
+  type: 'test'
+  ...
+# Subtest: later and same-day notices cannot silently satisfy prior-notice chronology
+ok 89 - later and same-day notices cannot silently satisfy prior-notice chronology
+  ---
+  duration_ms: 0.400264
+  type: 'test'
+  ...
+# Subtest: token splitting preserves every byte and large evidence uses bounded summaries without false all-clear
+ok 90 - token splitting preserves every byte and large evidence uses bounded summaries without false all-clear
+  ---
+  duration_ms: 21.922517
+  type: 'test'
+  ...
+# Subtest: malformed or incomplete PDF transcription cannot become verified evidence
+ok 91 - malformed or incomplete PDF transcription cannot become verified evidence
+  ---
+  duration_ms: 13.482151
+  type: 'test'
+  ...
+# Subtest: exports whitelist state, retain legitimate public citations, and omit private keys and unretained decision content
+ok 92 - exports whitelist state, retain legitimate public citations, and omit private keys and unretained decision content
+  ---
+  duration_ms: 1.803614
+  type: 'test'
+  ...
+# Subtest: unknown-officio decisions are never archived, and import resets historical clear
+ok 93 - unknown-officio decisions are never archived, and import resets historical clear
+  ---
+  duration_ms: 2.981713
+  type: 'test'
+  ...
+# Subtest: import rejects changed binary hashes and malformed case JSON
+ok 94 - import rejects changed binary hashes and malformed case JSON
+  ---
+  duration_ms: 8.50179
+  type: 'test'
+  ...
+# Subtest: scope confirmation requires actual source documents and correct per-document checks
+ok 95 - scope confirmation requires actual source documents and correct per-document checks
+  ---
+  duration_ms: 1.170658
+  type: 'test'
+  ...
+# Subtest: metadata editing invalidates previous findings and creates explicit manual claim versions
+ok 96 - metadata editing invalidates previous findings and creates explicit manual claim versions
+  ---
+  duration_ms: 2.068114
+  type: 'test'
+  ...
+# Subtest: cancellation retains already acquired bytes and leaves collection resumable
+ok 97 - cancellation retains already acquired bytes and leaves collection resumable
+  ---
+  duration_ms: 1.19826
+  type: 'test'
+  ...
+# Subtest: primary documents from a different application cannot satisfy identity or completeness
+ok 98 - primary documents from a different application cannot satisfy identity or completeness
+  ---
+  duration_ms: 0.845187
+  type: 'test'
+  ...
+# Subtest: an explicitly conflicting first-page application number overrides a mistaken reviewer checkbox
+ok 99 - an explicitly conflicting first-page application number overrides a mistaken reviewer checkbox
+  ---
+  duration_ms: 0.168574
+  type: 'test'
+  ...
+# Subtest: removing or reclassifying a manual claims document invalidates its saved version
+ok 100 - removing or reclassifying a manual claims document invalidates its saved version
+  ---
+  duration_ms: 1.531714
+  type: 'test'
+  ...
+# Subtest: reports omit unretained registration-decision quotes as well as case exports
+ok 101 - reports omit unretained registration-decision quotes as well as case exports
+  ---
+  duration_ms: 0.572054
+  type: 'test'
+  ...
+# Subtest: secret scrubbing does not alter original base64 bytes or hashes
+ok 102 - secret scrubbing does not alter original base64 bytes or hashes
+  ---
+  duration_ms: 2.043677
+  type: 'test'
+  ...
+# Subtest: explicit notice mapping never retroactively applies a known later version
+ok 103 - explicit notice mapping never retroactively applies a known later version
+  ---
+  duration_ms: 0.306623
+  type: 'test'
+  ...
+# Subtest: imported page text is reparsed from verified original bytes before review
+ok 104 - imported page text is reparsed from verified original bytes before review
+  ---
+  duration_ms: 2.825246
+  type: 'test'
+  ...
+# Subtest: explicit nonconsecutive page markers cannot be presented as a complete document
+ok 105 - explicit nonconsecutive page markers cannot be presented as a complete document
+  ---
+  duration_ms: 0.954992
+  type: 'test'
+  ...
+# Subtest: 0512 verification exposes the substantive-error condition to the reviewer interface
+ok 106 - 0512 verification exposes the substantive-error condition to the reviewer interface
+  ---
+  duration_ms: 0.342317
+  type: 'test'
+  ...
+# Subtest: verified API claim records participate in full office-action review without a false missing-page gate
+ok 107 - verified API claim records participate in full office-action review without a false missing-page gate
+  ---
+  duration_ms: 3.954042
+  type: 'test'
+  ...
+# Subtest: reading a supplied text fragment does not verify completeness of the original document
+ok 108 - reading a supplied text fragment does not verify completeness of the original document
+  ---
+  duration_ms: 1.454417
+  type: 'test'
+  ...
+# Subtest: intake derives canonical document type and labeled identity without making verification claims
+ok 109 - intake derives canonical document type and labeled identity without making verification claims
+  ---
+  duration_ms: 4.414868
+  type: 'test'
+  ...
+# Subtest: first-page heading has priority over an inaccurate filename
+ok 110 - first-page heading has priority over an inaccurate filename
+  ---
+  duration_ms: 4.310941
+  type: 'test'
+  ...
+# Subtest: filename-only metadata remains an explicit suggestion
+ok 111 - filename-only metadata remains an explicit suggestion
+  ---
+  duration_ms: 0.536651
+  type: 'test'
+  ...
+# Subtest: a final notice must be a heading or explicit status, not a phrase in the reasons
+ok 112 - a final notice must be a heading or explicit status, not a phrase in the reasons
+  ---
+  duration_ms: 0.420505
+  type: 'test'
+  ...
+# Subtest: multiple labeled application numbers are not silently picked
+ok 113 - multiple labeled application numbers are not silently picked
+  ---
+  duration_ms: 0.276097
+  type: 'test'
+  ...
+# Subtest: citation prose and later pages cannot supply the current application identity
+ok 114 - citation prose and later pages cannot supply the current application identity
+  ---
+  duration_ms: 0.373874
+  type: 'test'
+  ...
+# Subtest: metadata dates are validated, and a filing date is not substituted for a notice date
+ok 115 - metadata dates are validated, and a filing date is not substituted for a notice date
+  ---
+  duration_ms: 0.387696
+  type: 'test'
+  ...
+# Subtest: citation document identity explicitly warns against assigning its number to the case
+ok 116 - citation document identity explicitly warns against assigning its number to the case
+  ---
+  duration_ms: 0.638884
+  type: 'test'
+  ...
+# Subtest: KIPRIS document titles accept spaced print headings
+ok 117 - KIPRIS document titles accept spaced print headings
+  ---
+  duration_ms: 0.317319
+  type: 'test'
+  ...
+# Subtest: plain-text decoder supports UTF-16 BOM and retains page separators
+ok 118 - plain-text decoder supports UTF-16 BOM and retains page separators
+  ---
+  duration_ms: 0.820108
+  type: 'test'
+  ...
+# Subtest: plain-text decoder reads Korean CP949 with a visible encoding warning
+ok 119 - plain-text decoder reads Korean CP949 with a visible encoding warning
+  ---
+  duration_ms: 0.566235
+  type: 'test'
+  ...
+# Subtest: corrupt Unicode never becomes complete text extraction
+ok 120 - corrupt Unicode never becomes complete text extraction
+  ---
+  duration_ms: 0.337359
+  type: 'test'
+  ...
+# Subtest: binary and renamed PDF content are refused by text decoding
+ok 121 - binary and renamed PDF content are refused by text decoding
+  ---
+  duration_ms: 0.535959
+  type: 'test'
+  ...
+# Subtest: local parser supports TXT and JSON without interpreting instructions or fetching content
+ok 122 - local parser supports TXT and JSON without interpreting instructions or fetching content
+  ---
+  duration_ms: 1.961352
+  type: 'test'
+  ...
+# Subtest: cancelled parsing does not read a file or claim extraction success
+ok 123 - cancelled parsing does not read a file or claim extraction success
+  ---
+  duration_ms: 0.757544
+  type: 'test'
+  ...
+# Subtest: legacy HWP files receive conversion guidance
+ok 124 - legacy HWP files receive conversion guidance
+  ---
+  duration_ms: 0.50311
+  type: 'test'
+  ...
+# Subtest: DOCX local/central ZIP entry-name mismatches are refused before XML processing
+ok 125 - DOCX local/central ZIP entry-name mismatches are refused before XML processing
+  ---
+  duration_ms: 1.137618
+  type: 'test'
+  ...
+# Subtest: DOCX local/central uncompressed-length mismatches are refused
+ok 126 - DOCX local/central uncompressed-length mismatches are refused
+  ---
+  duration_ms: 0.445653
+  type: 'test'
+  ...
+# Subtest: a pre-cancelled model request makes no remote call
+ok 127 - a pre-cancelled model request makes no remote call
+  ---
+  duration_ms: 0.653277
+  type: 'test'
+  ...
+# Subtest: model timeout is reported distinctly without returning a partial review
+ok 128 - model timeout is reported distinctly without returning a partial review
+  ---
+  duration_ms: 18.868264
+  type: 'test'
+  ...
+# Subtest: local helper advertises v3 and still rejects cross-origin sessions
+ok 129 - local helper advertises v3 and still rejects cross-origin sessions
+  ---
+  duration_ms: 87.118247
+  type: 'test'
+  ...
+# Subtest: original Specimen Korean PDF fixture decodes its real CMap with complete page coverage
+ok 130 - original Specimen Korean PDF fixture decodes its real CMap with complete page coverage
+  ---
+  duration_ms: 30.141319
+  type: 'test'
+  ...
+# Subtest: original compressed PDF fixture reads through the native decompression API
+ok 131 - original compressed PDF fixture reads through the native decompression API
+  ---
+  duration_ms: 7.247685
+  type: 'test'
+  ...
+# Subtest: PDF marks scan-only pages separately from pages with text
+ok 132 - PDF marks scan-only pages separately from pages with text
+  ---
+  duration_ms: 8.366575
+  type: 'test'
+  ...
+# Subtest: 100 percent text-page coverage does not certify mixed visual content
+ok 133 - 100 percent text-page coverage does not certify mixed visual content
+  ---
+  duration_ms: 1.914211
+  type: 'test'
+  ...
+# Subtest: PDF annotations are counted as omitted content rather than silently certified
+ok 134 - PDF annotations are counted as omitted content rather than silently certified
+  ---
+  duration_ms: 1.827269
+  type: 'test'
+  ...
+# Subtest: unsupported PDF stream compression retains other pages and flags the missing page
+ok 135 - unsupported PDF stream compression retains other pages and flags the missing page
+  ---
+  duration_ms: 1.501448
+  type: 'test'
+  ...
+# Subtest: cyclic and inconsistent PDF page trees cannot certify physical order
+ok 136 - cyclic and inconsistent PDF page trees cannot certify physical order
+  ---
+  duration_ms: 2.420526
+  type: 'test'
+  ...
+# Subtest: mid-read cancellation stops later PDF pages and never reports partial success
+ok 137 - mid-read cancellation stops later PDF pages and never reports partial success
+  ---
+  duration_ms: 2.113912
+  type: 'test'
+  ...
+# Subtest: ZIP path traversal and duplicate aliases are refused before decompression
+ok 138 - ZIP path traversal and duplicate aliases are refused before decompression
+  ---
+  duration_ms: 1.86744
+  type: 'test'
+  ...
+# Subtest: ZIP CRC corruption is refused before XML decoding
+ok 139 - ZIP CRC corruption is refused before XML decoding
+  ---
+  duration_ms: 0.798826
+  type: 'test'
+  ...
+# Subtest: ZIP declared expansion cannot exceed bounded memory budgets
+ok 140 - ZIP declared expansion cannot exceed bounded memory budgets
+  ---
+  duration_ms: 0.422859
+  type: 'test'
+  ...
+# Subtest: corrupted XML Unicode is not silently reinterpreted as another Korean encoding
+ok 141 - corrupted XML Unicode is not silently reinterpreted as another Korean encoding
+  ---
+  duration_ms: 0.858096
+  type: 'test'
+  ...
+# Subtest: XML DTD and entity declarations are refused before DOM construction
+ok 142 - XML DTD and entity declarations are refused before DOM construction
+  ---
+  duration_ms: 0.79448
+  type: 'test'
+  ...
+# Subtest: XML extraction with an independent standard-library fixture adapter (not a native browser)
+    # Subtest: HWPX package spine determines section order, not filenames
+    ok 1 - HWPX package spine determines section order, not filenames
+      ---
+      duration_ms: 111.498386
+      type: 'test'
+      ...
+    # Subtest: HWPX missing spine remains a visible recovery state
+    ok 2 - HWPX missing spine remains a visible recovery state
+      ---
+      duration_ms: 26.96327
+      type: 'test'
+      ...
+    # Subtest: missing package-spine section fails instead of pretending full coverage
+    ok 3 - missing package-spine section fails instead of pretending full coverage
+      ---
+      duration_ms: 24.074658
+      type: 'test'
+      ...
+    # Subtest: HWPX nested table order and row/cell provenance are preserved
+    ok 4 - HWPX nested table order and row/cell provenance are preserved
+      ---
+      duration_ms: 56.09852
+      type: 'test'
+      ...
+    # Subtest: HWPX omitted equations and images prevent complete-text claim
+    ok 5 - HWPX omitted equations and images prevent complete-text claim
+      ---
+      duration_ms: 52.378592
+      type: 'test'
+      ...
+    # Subtest: HWPX declared section count must match the package
+    ok 6 - HWPX declared section count must match the package
+      ---
+      duration_ms: 24.340359
+      type: 'test'
+      ...
+    # Subtest: HWPX preview alone cannot substitute for document body
+    ok 7 - HWPX preview alone cannot substitute for document body
+      ---
+      duration_ms: 0.458342
+      type: 'test'
+      ...
+    # Subtest: DOCX tables, inserted text, deletions, and note parts retain intended scope
+    ok 8 - DOCX tables, inserted text, deletions, and note parts retain intended scope
+      ---
+      duration_ms: 48.78106
+      type: 'test'
+      ...
+    # Subtest: DOCX automatic numbering and equations are explicitly omitted
+    ok 9 - DOCX automatic numbering and equations are explicitly omitted
+      ---
+      duration_ms: 22.718064
+      type: 'test'
+      ...
+    # Subtest: malformed XML is rejected by the active XML parser
+    ok 10 - malformed XML is rejected by the active XML parser
+      ---
+      duration_ms: 24.395477
+      type: 'test'
+      ...
+    # Subtest: deep XML is refused before recursive paragraph walking
+    ok 11 - deep XML is refused before recursive paragraph walking
+      ---
+      duration_ms: 24.611909
+      type: 'test'
+      ...
+    # Subtest: UTF-16 XML is decoded without replacing Korean characters
+    ok 12 - UTF-16 XML is decoded without replacing Korean characters
+      ---
+      duration_ms: 52.804806
+      type: 'test'
+      ...
+    1..12
+ok 143 - XML extraction with an independent standard-library fixture adapter (not a native browser)
+  ---
+  duration_ms: 472.554176
+  type: 'test'
+  ...
+# Subtest: native Chromium XML/ZIP document reading
+ok 144 - native Chromium XML/ZIP document reading # SKIP Optional native browser tests are opt-in (QURI_NATIVE_PARSER_TESTS=1).
+  ---
+  duration_ms: 0.08647
+  type: 'test'
+  ...
+# Subtest: guide opens only on request, visits all six real views/targets, and never submits work
+ok 145 - guide opens only on request, visits all six real views/targets, and never submits work
+  ---
+  duration_ms: 477.502323
+  type: 'test'
+  ...
+# Subtest: Escape closes from the actual input, restores focus, and navigation keeps its own focus
+ok 146 - Escape closes from the actual input, restores focus, and navigation keeps its own focus
+  ---
+  duration_ms: 303.469423
+  type: 'test'
+  ...
+# Subtest: actual upload hooks maintain one waiting timer, preserve progress across navigation, and render source text safely
+ok 147 - actual upload hooks maintain one waiting timer, preserve progress across navigation, and render source text safely
+  ---
+  duration_ms: 468.859085
+  type: 'test'
+  ...
+# Subtest: completed intake shows hold and new case releases the old visual state
+ok 148 - completed intake shows hold and new case releases the old visual state
+  ---
+  duration_ms: 544.065091
+  type: 'test'
+  ...
+# Subtest: hidden tabs stop timers and off-screen sprites pause without losing elapsed time
+ok 149 - hidden tabs stop timers and off-screen sprites pause without losing elapsed time
+  ---
+  duration_ms: 481.110717
+  type: 'test'
+  ...
+# Subtest: both system preference and the real motion toggle stop frames while retaining labels
+ok 150 - both system preference and the real motion toggle stop frames while retaining labels
+  ---
+  duration_ms: 151.004592
+  type: 'test'
+  ...
+# Subtest: synthetic demo remains explicitly labeled and does not start waiting work
+ok 151 - synthetic demo remains explicitly labeled and does not start waiting work
+  ---
+  duration_ms: 378.435607
+  type: 'test'
+  ...
+# Subtest: controller busy state recovers missing hooks and prevents guide from starting mid-request
+ok 152 - controller busy state recovers missing hooks and prevents guide from starting mid-request
+  ---
+  duration_ms: 449.831549
+  type: 'test'
+  ...
+# Subtest: actual HTML exposes all controller IDs and only existing local executable/image assets
+ok 153 - actual HTML exposes all controller IDs and only existing local executable/image assets
+  ---
+  duration_ms: 138.739666
+  type: 'test'
+  ...
+# Subtest: all six real navigation controls activate exactly one matching view
+ok 154 - all six real navigation controls activate exactly one matching view
+  ---
+  duration_ms: 264.859529
+  type: 'test'
+  ...
+# Subtest: three demo choices keep synthetic marker and show the exact distinct statuses
+ok 155 - three demo choices keep synthetic marker and show the exact distinct statuses
+  ---
+  duration_ms: 734.967972
+  type: 'test'
+  ...
+# Subtest: finding filter buttons from the HTML select confirmed and pending cards
+ok 156 - finding filter buttons from the HTML select confirmed and pending cards
+  ---
+  duration_ms: 323.708137
+  type: 'test'
+  ...
+# Subtest: manual form survives async currentTarget clearing and preserves metadata
+ok 157 - manual form survives async currentTarget clearing and preserves metadata
+  ---
+  duration_ms: 494.005783
+  type: 'test'
+  ...
+# Subtest: official code search keeps four digits including leading zero
+ok 158 - official code search keeps four digits including leading zero
+  ---
+  duration_ms: 100.035796
+  type: 'test'
+  ...
+# Subtest: untrusted finding and document strings display as text without creating markup
+ok 159 - untrusted finding and document strings display as text without creating markup
+  ---
+  duration_ms: 507.371446
+  type: 'test'
+  ...
+# Subtest: invalid import preserves current case and demo close restores prior work
+ok 160 - invalid import preserves current case and demo close restores prior work
+  ---
+  duration_ms: 1016.797475
+  type: 'test'
+  ...
+# Subtest: case export serializes only the current case, never API settings
+ok 161 - case export serializes only the current case, never API settings
+  ---
+  duration_ms: 242.488724
+  type: 'test'
+  ...
+# Subtest: progress updates retain live stage elements and do not convert container to text
+ok 162 - progress updates retain live stage elements and do not convert container to text
+  ---
+  duration_ms: 666.843309
+  type: 'test'
+  ...
+# Subtest: v3 new-case action releases prior bytes text results previews and unsaved references
+ok 163 - v3 new-case action releases prior bytes text results previews and unsaved references
+  ---
+  duration_ms: 568.081503
+  type: 'test'
+  ...
+# Subtest: real engine demo cases render compatible statuses and exact official code
+ok 164 - real engine demo cases render compatible statuses and exact official code
+  ---
+  duration_ms: 574.252188
+  type: 'test'
+  ...
+# Subtest: real engine manual import, keyless case export and reopen retain source but downgrade unverified conclusions
+ok 165 - real engine manual import, keyless case export and reopen retain source but downgrade unverified conclusions
+  ---
+  duration_ms: 857.487253
+  type: 'test'
+  ...
+# Subtest: v2 blank-number manual upload works without keys and stays unverified
+ok 166 - v2 blank-number manual upload works without keys and stays unverified
+  ---
+  duration_ms: 688.795873
+  type: 'test'
+  ...
+# Subtest: v2 detected application numbers are suggestions and mixed files cannot become one confirmed case
+ok 167 - v2 detected application numbers are suggestions and mixed files cannot become one confirmed case
+  ---
+  duration_ms: 478.175495
+  type: 'test'
+  ...
+# Subtest: v2 upload suppresses duplicate bytes under another name and reports failures per file
+ok 168 - v2 upload suppresses duplicate bytes under another name and reports failures per file
+  ---
+  duration_ms: 419.399705
+  type: 'test'
+  ...
+# Subtest: v2 malformed PDF bytes are excluded and explained without discarding valid sibling files
+ok 169 - v2 malformed PDF bytes are excluded and explained without discarding valid sibling files
+  ---
+  duration_ms: 406.622102
+  type: 'test'
+  ...
+# Subtest: v2 ordinary JSON is a source document and recognized saved JSON reopens the case
+ok 170 - v2 ordinary JSON is a source document and recognized saved JSON reopens the case
+  ---
+  duration_ms: 1082.271367
+  type: 'test'
+  ...
+# Subtest: v2 document modal saves metadata without granting unchecked verification
+ok 171 - v2 document modal saves metadata without granting unchecked verification
+  ---
+  duration_ms: 488.447138
+  type: 'test'
+  ...
+# Subtest: v2 input tabs support arrow keys Home and End and track focus and panel visibility
+ok 172 - v2 input tabs support arrow keys Home and End and track focus and panel visibility
+  ---
+  duration_ms: 124.368363
+  type: 'test'
+  ...
+# Subtest: v2 finding UI cannot turn automatic evidence proof into a reviewer checkbox
+ok 173 - v2 finding UI cannot turn automatic evidence proof into a reviewer checkbox
+  ---
+  duration_ms: 459.047365
+  type: 'test'
+  ...
+# Subtest: v2 excluding a source invalidates confirmed findings coverage and its claim version
+ok 174 - v2 excluding a source invalidates confirmed findings coverage and its claim version
+  ---
+  duration_ms: 552.284543
+  type: 'test'
+  ...
+# Subtest: v2 candidate exclusion requires a reason and records the audit without declaring a clear case
+ok 175 - v2 candidate exclusion requires a reason and records the audit without declaring a clear case
+  ---
+  duration_ms: 601.496387
+  type: 'test'
+  ...
+# Subtest: v2 another application is rejected as case evidence but accepted unverified through the citation upload selector
+ok 176 - v2 another application is rejected as case evidence but accepted unverified through the citation upload selector
+  ---
+  duration_ms: 1099.704198
+  type: 'test'
+  ...
+# Subtest: v3 valid import cleans the previous case only after validation succeeds
+ok 177 - v3 valid import cleans the previous case only after validation succeeds
+  ---
+  duration_ms: 1072.323118
+  type: 'test'
+  ...
+# Subtest: v3 JSON detection locks workspace before reading and refuses a concurrent intake
+ok 178 - v3 JSON detection locks workspace before reading and refuses a concurrent intake
+  ---
+  duration_ms: 484.525789
+  type: 'test'
+  ...
+# Subtest: v3 cancelled saved-case import leaves the previous case intact
+ok 179 - v3 cancelled saved-case import leaves the previous case intact
+  ---
+  duration_ms: 618.068104
+  type: 'test'
+  ...
+# Subtest: v3 aggregate upload cap rejects bytes before any file body is read
+ok 180 - v3 aggregate upload cap rejects bytes before any file body is read
+  ---
+  duration_ms: 94.304317
+  type: 'test'
+  ...
+# Subtest: v3 output presets and settings retain explicit model limits and call caps
+ok 181 - v3 output presets and settings retain explicit model limits and call caps
+  ---
+  duration_ms: 118.372374
+  type: 'test'
+  ...
+# Subtest: v3 manual memory purge clears demo backup as well as the visible synthetic case
+ok 182 - v3 manual memory purge clears demo backup as well as the visible synthetic case
+  ---
+  duration_ms: 833.941126
+  type: 'test'
+  ...
+1..182
+# tests 194
+# suites 0
+# pass 193
+# fail 0
+# cancelled 0
+# skipped 1
+# todo 0
+# duration_ms 16537.638627

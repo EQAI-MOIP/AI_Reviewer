@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "family": "ai-quality-system",
+  "kind": "diagnostic",
+  "edition": "portable",
+  "version": "2026.11.12",
+  "releaseId": "diagnostic-portable-2026.11.12",
+  "skillName": "kipris-notice-review-portable",
+  "displayName": "AI 품질진단 시스템",
+  "preserveFiles": [
+    "APIKEY.md"
+  ]
+}

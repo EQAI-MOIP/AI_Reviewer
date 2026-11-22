@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "format": "ai-review-chief-case",
+  "appName": "AI 심사팀장 큐리",
+  "appVersion": "2.0.0",
+  "sourceVersion": "2026.11.12",
+  "applicationNumber": "1000000000000",
+  "mode": "demo",
+  "createdAt": "2026-11-22T14:06:11.572Z",
+  "updatedAt": "2026-11-22T14:06:11.572Z",
+  "reviewedAt": "2026-11-22T14:06:11.573Z",
+  "exportedAt": "2026-11-22T14:06:11.574Z",
+  "history": [
+    {
+      "id": "demo-event",
+      "type": "registration-decision",
+      "title": "합성 특허결정",
+      "date": "20261030",
+      "documentNumber": "DEMO",
+      "documentId": "demo-registered"
+    }
+  ],
+  "documents": [
+    {
+      "id": "demo-registered",
+      "type": "registration-gazette",
+      "title": "합성 등록청구항",
+      "date": "20261101",
+      "documentNumber": "DEMO",
+      "applicationNumber": "1000000000000",
+      "filename": "synthetic-claims.txt",
+      "source": "synthetic-demo",
+      "sha256": "",
+      "pageCount": 1,
+      "officialCorrection": "unknown",
+      "citationIdentifier": "",
+      "citationNumber": "",
+      "metadataSuggested": false,
+      "retention": "retain",
+      "text": "청구항 1\nA를 포함하는 조성물, 특히 B로 이루어진 조성물.",
+      "pages": [
+        {
+          "page": 1,
+          "text": "청구항 1\nA를 포함하는 조성물, 특히 B로 이루어진 조성물."
+        }
+      ],
+      "extraction": {
+        "source": "synthetic-demo",
+        "status": "demo",
+        "complete": true,
+        "visualPending": false,
+        "warnings": []
+      },
+      "identityPreviouslyVerified": true
+    }
+  ],
+  "adjudications": [],
+  "claimVersions": [],
+  "registeredClaims": [],
+  "findings": [
+    {
+      "id": "demo-finding",
+      "origin": "demo",
+      "ruleId": "RC-07",
+      "code": "0511",
+      "codeCandidate": "0511",
+      "title": "등록청구항에 선호·강조의 이중한정 잔존",
+      "verdict": "confirmed",
+      "claims": [
+        1
+      ],
+      "summary": "합성 예시에서 A 전체와 B 중 어느 범위로 한정되는지 갈립니다. 원문 판본과 해석 장애가 확인된 상황을 보여주는 0511 안내입니다.",
+      "evidence": [
+        {
+          "documentId": "demo-registered",
+          "page": 1,
+          "quote": "A를 포함하는 조성물, 특히 B로 이루어진 조성물."
+        }
+      ],
+      "alternative": "설명에만 있는 표현이나 삭제된 청구항은 현재 등록청구항 하자로 집계하지 않습니다.",
+      "missing": [],
+      "codeValidation": {
+        "valid": true,
+        "code": "0511",
+        "isReturnReason": true,
+        "errors": [],
+        "required": []
+      },
+      "reviewerExclusion": null
+    }
+  ],
+  "coverage": [
+    {
+      "unitId": "demo-RC",
+      "documentId": "demo-registered",
+      "group": "RC",
+      "ruleId": "RC-01",
+      "result": "none",
+      "reason": "합성 시연의 준비된 결과입니다.",
+      "complete": true,
+      "sourceComplete": true,
+      "mode": "demo"
+    },
+    {
+      "unitId": "demo-RC",
+      "documentId": "demo-registered",
+      "group": "RC",
+      "ruleId": "RC-02",
+      "result": "none",
+      "reason": "합성 시연의 준비된 결과입니다.",
+      "complete": true,
+      "sourceComplete": true,
+      "mode": "demo"
+    },
+    {
+      "unitId": "demo-RC",
+      "documentId": "demo-registered",
+      "group": "RC",
+      "ruleId": "RC-03",
+      "result": "none",
+      "reason": "합성 시연의 준비된 결과입니다.",
+      "complete": true,
+      "sourceComplete": true,
+      "mode": "demo"
+    },
+    {
+      "unitId": "demo-RC",
+      "documentId": "demo-registered",
+      "group": "RC",
+      "ruleId": "RC-04",
+      "result": "none",
+      "reason": "합성 시연의 준비된 결과입니다.",
+      "complete": true,
+      "sourceComplete": true,
+      "mode": "demo"
+    },
+    {
+      "unitId": "demo-RC",
+      "documentId": "demo-registered",
+      "group": "RC",
+      "ruleId": "RC-05",
+      "result": "none",
+      "reason": "합성 시연의 준비된 결과입니다.",
+      "complete": true,
+      "sourceComplete": true,
+      "mode": "demo"
+    },
+    {
+      "unitId": "demo-RC",
+      "documentId": "demo-registered",
+      "group": "RC",
+      "ruleId": "RC-06",
+      "result": "none",
+      "reason": "합성 시연의 준비된 결과입니다.",
+      "complete": true,
+      "sourceComplete": true,
+      "mode": "demo"
+    },
+    {
+      "unitId": "demo-RC",
+      "documentId": "demo-registered",
+      "group": "RC",
+      "ruleId": "RC-07",
+      "result": "finding",
+      "reason": "합성 시연의 준비된 결과입니다.",
+      "complete": true,
+      "sourceComplete": true,
+      "mode": "demo"
+    }
+  ],
+  "ledger": [
+    {
+      "at": "2026-11-22T14:06:11.573Z",
+      "stage": "합성 시연",
+      "message": "합성 시연 자료 · 실제 출원 검토 아님"
+    }
+  ],
+  "failures": [],
+  "missingSources": [],
+  "previousReview": {
+    "status": "issues",
+    "summary": "확인된 반려사항이 있습니다",
+    "confirmed": 1,
+    "pending": 0,
+    "sourceVersion": "2026.11.12",
+    "reviewedAt": "2026-11-22T14:06:11.573Z",
+    "mode": "demo"
+  },
+  "demoLabel": "합성 시연 자료 · 실제 출원 검토 아님"
+}

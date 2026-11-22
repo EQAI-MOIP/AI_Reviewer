@@ -1,0 +1,105 @@
+{
+  "application": "AI 심사팀장 큐리",
+  "version": "3.0.0",
+  "checkedDate": "2026-11-22",
+  "rules": {
+    "name": "AI 품질진단 시스템",
+    "version": "2026.11.12",
+    "type": "diagnostic",
+    "edition": "portable",
+    "counts": {
+      "OA": 17,
+      "RD": 6,
+      "RC": 7,
+      "codes": 84
+    },
+    "originals": "rules/",
+    "noKeysIncluded": true,
+    "exactSourceFilesVerified": true
+  },
+  "specimen": {
+    "repository": "https://github.com/EQAI-MOIP/Specimen",
+    "commit": "be10c653c575a3ad2370af6bfa49cc900f221203",
+    "reusedFiles": [
+      "js/parsers.js",
+      "assets/inspector-hero-4frames.webp",
+      "assets/inspector-science-6frames.webp",
+      "assets/conveyor-v2.webp",
+      "tests/fixtures/korean-cmap.pdf",
+      "tests/fixtures/flate.pdf"
+    ],
+    "notice": "Original repository declares no separate license; no additional public license is granted."
+  },
+  "assets": [
+    {
+      "path": "assets/inspector-hero-4frames.webp",
+      "origin": "https://github.com/EQAI-MOIP/Specimen/blob/be10c653c575a3ad2370af6bfa49cc900f221203/assets/inspector-hero-4frames.webp",
+      "bytes": 640270,
+      "sha256": "609b1703e8887d895439644072b7b0211fe74d7e632bbb11f05152cd06f75fc1",
+      "gitBlobSha1": "c01cfaa42a3675006617a0e9effc14f685bb4c62"
+    },
+    {
+      "path": "assets/inspector-science-6frames.webp",
+      "origin": "https://github.com/EQAI-MOIP/Specimen/blob/be10c653c575a3ad2370af6bfa49cc900f221203/assets/inspector-science-6frames.webp",
+      "bytes": 315568,
+      "sha256": "72b1d0f298149efb844194354f9299bae4e43337b3939548899b7c4d87b8c96f",
+      "gitBlobSha1": "fd1dd26188f169af040c5cffb251c730406c3bd0"
+    },
+    {
+      "path": "assets/conveyor-v2.webp",
+      "origin": "https://github.com/EQAI-MOIP/Specimen/blob/be10c653c575a3ad2370af6bfa49cc900f221203/assets/conveyor-v2.webp",
+      "bytes": 96550,
+      "sha256": "c696fb236bc9ae3f518396bbd6cc670a345fb695fdf5f026ee958002f0510ebf",
+      "gitBlobSha1": "f8d975891f77efa4154e61a2af88f55072abdfb3"
+    },
+    {
+      "path": "assets/quri-v2-guide-6frames.webp",
+      "origin": "generated-for-v2-with-imagegen",
+      "bytes": 335482,
+      "sha256": "b47271533a4a6c3d445d865552a17cf6c6fa547dccc2ca844bb21dd946902cf8",
+      "width": 1536,
+      "height": 1024,
+      "layout": "3x2",
+      "cell": [
+        512,
+        512
+      ],
+      "prompt": "docs/SPRITES-V2.md"
+    },
+    {
+      "path": "assets/quri-v3-motion-16frames.webp",
+      "origin": "generated-for-v3-with-imagegen",
+      "bytes": 468350,
+      "sha256": "9d7cefccfffc8c82dca087d980e852e1bf6b948c990c9d30789b06251f1c6738",
+      "width": 1254,
+      "height": 1254,
+      "layout": "4x4",
+      "prompt": "docs/SPRITES-V3.md"
+    }
+  ],
+  "officialApiDocs": [
+    "https://developers.openai.com/api/docs/guides/migrate-to-responses",
+    "https://developers.openai.com/api/docs/guides/file-inputs",
+    "https://developers.openai.com/api/reference/resources/responses/subresources/input_tokens/methods/count",
+    "https://plus.kipris.or.kr/portal/popup/DBII_000000000000001/SC002/ADI_0000000000002944/apiDescriptionSearch.do",
+    "https://developers.openai.com/api/docs/guides/reasoning",
+    "https://developers.openai.com/api/docs/guides/token-counting"
+  ],
+  "boundaries": {
+    "realPaidApiTested": false,
+    "actualBrowserVisualTested": false,
+    "userKeysEmbedded": false,
+    "cdnRuntimeDependencies": false,
+    "modelAccuracyParityProven": false
+  },
+  "inputArchive": "AI_Review_Leader_QURI_v2.0.0(1).zip",
+  "newAssetManifests": [
+    "assets/review-sprites.json",
+    "assets/quri-v2-sprites.json",
+    "assets/quri-v3-sprites.json"
+  ],
+  "documentFormatDocs": [
+    "https://tech.hancom.com/hwpxformat/",
+    "https://tech.hancom.com/python-hwpx-parsing-1/"
+  ]
+}

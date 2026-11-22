@@ -1,0 +1,64 @@
+{
+  "version": "1.0.0",
+  "sourceRepository": "EQAI-MOIP/Specimen",
+  "sourceCommit": "be10c653c575a3ad2370af6bfa49cc900f221203",
+  "assets": {
+    "inspector-hero-4frames.webp": {
+      "width": 1254,
+      "height": 1254,
+      "columns": 2,
+      "rows": 2,
+      "frameWidth": 627,
+      "frameHeight": 627,
+      "alpha": true,
+      "frames": [
+        "upload_welcome",
+        "ai_suspected",
+        "no_strong_trace",
+        "undetermined"
+      ],
+      "purpose": "Primary user-facing upload and three-state verdict character atlas, actual CSS sprite rendering"
+    },
+    "inspector-science-6frames.webp": {
+      "width": 1536,
+      "height": 1024,
+      "columns": 3,
+      "rows": 2,
+      "frameWidth": 512,
+      "frameHeight": 512,
+      "alpha": true,
+      "frames": [
+        "explain-book",
+        "inspect-magnifier",
+        "consider-counterexample",
+        "compare-documents",
+        "present-research",
+        "welcome-next-step"
+      ],
+      "usage": "Scientific-methods lesson hero and tutor. Pose changes on lesson/counterexample; CSS floating honors reduced motion."
+    },
+    "conveyor-v2.webp": {
+      "width": 2172,
+      "height": 724,
+      "purpose": "Offline 3D conveyor image"
+    },
+    "review-states-6frames.webp": {
+      "width": 1536,
+      "height": 1024,
+      "columns": 3,
+      "rows": 2,
+      "frameWidth": 512,
+      "frameHeight": 512,
+      "alpha": true,
+      "frames": [
+        "archive-retrieval",
+        "claim-versions",
+        "compare-notices",
+        "finding",
+        "no-findings",
+        "missing-documents"
+      ],
+      "metadata": "review-sprites.json"
+    }
+  }
+}
