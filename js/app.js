@@ -3,8 +3,9 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const API = window.ReviewAPI, Rules = window.ReviewRules, Engine = window.ReviewEngine;
+  const runtime = API.runtimeInfo(location);
   const state = { caseData: null, settings: { ...API.defaults }, busy: false, controller: null,
-    filter: 'all', view: 'review', inputMode: 'manual', demoBackup: null, dirty: false, objectURLs: new Set(), downloadURLs: new Map(), motion: true, intakePending: false };
+    filter: 'all', view: 'review', inputMode: 'manual', demoBackup: null, dirty: false, objectURLs: new Set(), downloadURLs: new Map(), motion: true, intakePending: false, connectionTest: false };
   const names = { review: '진단 시작', results: '진단 결과', documents: '서류 준비', rules: '검토 규칙', guide: '사용 안내', settings: '설정' };
   const typeNames = { 'office-action': '의견제출통지서', 'final-notice': '최후 의견제출통지서', rejection: '거절결정서',
     'registration-decision': '등록결정서', publication: '공개공보', 'registration-gazette': '등록공보',
@@ -30,24 +31,52 @@
   function desc(value) { return typeof value === 'string' ? value : value && (value.message || value.reason || value.description || value.title) || ''; }
   function current() { return state.caseData; }
 
-  function showView(view, focus = true) {
-    if (!names[view]) return;
+  function showView(view, focus = true, recordHistory = true) {
+    if (!Object.hasOwn(names, view)) return;
+    const changed = state.view !== view;
     state.view = view;
     document.querySelectorAll('.view').forEach(n => { n.hidden = n.id !== 'view-' + view; });
     document.querySelectorAll('.nav-item[data-view]').forEach(n => { const active = n.dataset.view === view; n.classList.toggle('active', active); if (active) n.setAttribute('aria-current', 'page'); else n.removeAttribute('aria-current'); });
     setText('current-view-label', names[view]); updateGuidance();
-    try { history.replaceState(null, '', '#' + view); } catch (_) { /* File origins may restrict history. */ }
+    if (recordHistory) {
+      try {
+        if (focus && changed && typeof history.pushState === 'function') history.pushState(null, '', '#' + view);
+        else history.replaceState(null, '', '#' + view);
+      } catch (_) { /* File origins may restrict history. */ }
+    }
+    document.title = names[view] + ' · AI 심사팀장 큐리';
     if (view === 'rules') renderRules();
     if (focus) { const heading = $('view-' + view).querySelector('h1'); if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); } window.scrollTo({ top: 0 }); }
   }
 
   function updateConnection() {
     const s = state.settings;
-    const configured = Boolean(s.model && (s.llmKey || /(?:localhost|127\.0\.0\.1|\[::1\])/.test(s.llmBase)));
+    let localModel = false;
+    try { localModel = ['localhost', '127.0.0.1', '[::1]'].includes(new URL(s.llmBase).hostname); } catch (_) { /* Incomplete settings are not ready. */ }
+    const configured = Boolean(s.model && (s.llmKey || localModel));
     $('settings-dot').classList.toggle('ready', configured);
     $('settings-dot').title = configured ? 'API 설정 입력됨 · 실제 연결은 연결 확인으로 점검' : 'AI 진단용 LLM 연결을 설정해 주세요';
-    setText('connection-label', navigator.onLine === false ? '오프라인 · 로컬 사용' : API.usesRelay(s) ? '로컬 실행 도우미' : '로컬 워크스페이스');
+    setText('connection-label', navigator.onLine === false ? '오프라인 · 문서 작업 가능' : runtime.mode === 'web' ? '웹에서 사용 중' : runtime.canUseRelay && API.usesRelay(s) ? '로컬 중계 모드' : '브라우저 직접 연결');
     $('connection-badge').classList.toggle('offline', navigator.onLine === false);
+    renderHosting();
+  }
+
+  function renderHosting() {
+    const web = runtime.mode === 'web';
+    if ($('hosting-notice')) $('hosting-notice').hidden = false;
+    if ($('hosting-settings-message')) $('hosting-settings-message').hidden = false;
+    setText('hosting-title', web ? '설치 없이, 문서부터 준비하세요' : runtime.mode === 'file' ? '파일로 실행 중입니다' : '이 컴퓨터에서 실행 중입니다');
+    setText('hosting-message', web
+      ? '문서 추가와 예시 보기는 바로 사용할 수 있어요. AI 진단은 연결 설정 후 시작하세요.'
+      : runtime.mode === 'file' ? '문서 추가와 예시 보기를 사용할 수 있어요. API 연결이 막히면 내려받은 폴더의 실행 도우미를 이용하세요.'
+      : '문서를 준비한 뒤 연결을 확인하세요. 자동 연결은 이 주소에서 실행 중인 로컬 도우미를 사용합니다.');
+    setText('hosting-settings-message', web
+      ? 'GitHub Pages에서는 브라우저가 설정한 API에 직접 연결합니다. API 제공자가 이 사이트의 연결(CORS)을 허용해야 해요. 연결이 차단되면 앱을 내려받아 로컬 실행 도우미로 여세요. 이 웹사이트에는 API 중계 서버가 없습니다.'
+      : runtime.mode === 'file' ? '파일로 연 앱에서는 API에 직접 연결합니다. 연결이 차단되면 내려받은 폴더에서 node server.js를 실행하고 표시된 주소로 접속하세요.'
+      : '자동 연결은 node server.js로 실행한 로컬 도우미를 사용합니다. 일반 정적 서버로 열었다면 브라우저 직접 연결을 선택하세요.');
+    setText('connection-mode-help', runtime.canUseRelay ? '자동 연결은 로컬 실행 도우미를 사용합니다. 직접 연결은 API 제공자의 CORS 허용이 필요합니다.' : '이 화면에서는 자동·직접 연결 모두 브라우저에서 API에 연결합니다. 로컬 중계는 내려받은 앱의 실행 도우미에서 사용할 수 있습니다.');
+    const relayOption = $('connection-mode').querySelector('option[value="relay"]');
+    if (relayOption) relayOption.disabled = !runtime.canUseRelay;
   }
 
   function readSettings() {
@@ -64,6 +93,7 @@
     if (!Number.isInteger(result.timeoutMs) || result.timeoutMs < 30000 || result.timeoutMs > 900000) throw new Error('호출 대기 시간은 30~900초로 설정해 주세요.');
     if (!Number.isInteger(result.maxModelCalls) || result.maxModelCalls < 1 || result.maxModelCalls > 300) throw new Error('사건당 AI 호출 상한은 1~300회로 설정해 주세요.');
     API.endpointURL(result.llmBase, result.apiMode);
+    if (result.connectionMode === 'relay' && !runtime.canUseRelay) throw new Error('이 화면에서는 로컬 중계를 사용할 수 없습니다. 자동 또는 브라우저 직접 연결을 선택해 주세요.');
     if (!result.kiprisBase) result.kiprisBase = API.defaults.kiprisBase;
     const k = new URL(result.kiprisBase); if (k.protocol !== 'https:' || k.username || k.password || k.search || k.hash) throw new Error('KIPRIS Plus Base URL은 인증정보나 쿼리가 없는 HTTPS 주소여야 합니다.');
     return result;
@@ -86,6 +116,8 @@
     $('clear-documents').disabled = value || !current()?.documents?.length;
     $('export-case').disabled = value || !current(); $('export-report').disabled = value || !current();
     $('review-form').setAttribute('aria-busy', String(value));
+    $('settings-form').setAttribute('aria-busy', String(value && state.connectionTest));
+    if ($('cancel-connection')) $('cancel-connection').hidden = !value || !state.connectionTest;
     document.querySelectorAll('[data-input-mode], #manual-case-form button').forEach(n => { n.disabled = value; });
     $('home-drop-zone')?.setAttribute('aria-disabled', String(value)); $('drop-zone').setAttribute('aria-disabled', String(value));
     updateGuidance();
@@ -550,17 +582,43 @@
     } catch (e) { setText('document-feedback', safeError(e)); } finally { setBusy(false); state.controller = null; renderAll(); }
   }
 
-  async function testLLM() { if (state.busy) return; const b = $('test-llm'); try { applySettings(true); b.disabled = true; setText('llm-test-result', '설정한 제공자의 모델 목록을 확인하고 있습니다…'); const r = await API.testConnection(state.settings); setText('llm-test-result', r.note + (r.modelAvailable === false ? ' 입력한 모델 ID는 반환된 목록에서 확인되지 않았습니다.' : r.modelAvailable ? ' 입력한 모델을 목록에서 확인했습니다.' : ' 모델 ID를 선택하거나 입력해 주세요.')); let dl = $('available-models'); if (!dl) { dl = el('datalist'); dl.id = 'available-models'; $('llm-model').after(dl); $('llm-model').setAttribute('list', dl.id); } dl.replaceChildren(); array(r.models).slice(0, 1000).forEach(id => { const o = el('option'); o.value = id; dl.append(o); }); } catch (e) { setText('llm-test-result', safeError(e)); } finally { b.disabled = false; } }
-  async function testKipris() { if (state.busy) return; const b = $('test-kipris'); try { applySettings(true); const no = API.normalizeApplicationNumber($('application-number').value); b.disabled = true; setText('kipris-test-result', '입력한 출원의 행정처리 이력으로 연결을 확인하고 있습니다…'); if (!API.testKipris) throw new Error('출원번호를 입력한 뒤 심사 검토 화면에서 연결을 확인해 주세요.'); const r = await API.testKipris(no, state.settings); setText('kipris-test-result', r.note || '행정처리 이력 연결을 확인했습니다. 문서별 상품 이용 권한은 수집 단계에서 별도로 확인합니다.'); } catch (e) { setText('kipris-test-result', safeError(e)); } finally { b.disabled = false; } }
-  async function testGeneration(pdf) {
+  async function runConnectionTest(resultId, pendingMessage, perform) {
     if (state.busy) return;
     try {
-      applySettings(true); state.controller = new AbortController(); setBusy(true);
-      setText('capability-test-result', pdf ? '합성 1쪽 PDF로 입력 토큰 계산과 판독 응답을 확인합니다…' : '합성 문구로 실제 모델 호출을 확인합니다…');
-      const result = await API.testGeneration(state.settings, { pdf, signal: state.controller.signal });
-      setText('capability-test-result', result.note);
-    } catch (e) { setText('capability-test-result', safeError(e)); }
-    finally { state.controller = null; setBusy(false); }
+      applySettings(true); state.controller = new AbortController(); state.connectionTest = true; setBusy(true);
+      setText(resultId, pendingMessage);
+      const controller = state.controller;
+      const message = await perform(controller.signal);
+      if (controller.signal.aborted) throw new DOMException('연결 확인을 중단했습니다.', 'AbortError');
+      setText(resultId, message);
+    } catch (e) { setText(resultId, e.name === 'AbortError' ? '연결 확인을 중단했습니다. 설정을 확인하고 다시 시도할 수 있어요.' : safeError(e)); }
+    finally { state.controller = null; state.connectionTest = false; setBusy(false); }
+  }
+  async function testLLM() {
+    return runConnectionTest('llm-test-result', '설정한 제공자의 모델 목록을 확인하고 있습니다…', async signal => {
+      const r = await API.testConnection(state.settings, { signal });
+      if (signal.aborted) throw new DOMException('연결 확인을 중단했습니다.', 'AbortError');
+      let dl = $('available-models');
+      if (!dl) { dl = el('datalist'); dl.id = 'available-models'; $('llm-model').after(dl); $('llm-model').setAttribute('list', dl.id); }
+      dl.replaceChildren();
+      array(r.models).slice(0, 1000).forEach(id => { const o = el('option'); o.value = id; dl.append(o); });
+      return r.note + (r.modelAvailable === false ? ' 입력한 모델 ID는 반환된 목록에서 확인되지 않았습니다.' : r.modelAvailable ? ' 입력한 모델을 목록에서 확인했습니다.' : ' 모델 ID를 선택하거나 입력해 주세요.');
+    });
+  }
+  async function testKipris() {
+    return runConnectionTest('kipris-test-result', '입력한 출원의 행정처리 이력으로 연결을 확인하고 있습니다…', async signal => {
+      const raw = $('application-number').value || $('manual-case-number').value || current()?.applicationNumber;
+      if (!raw) throw new Error('진단 시작 → 출원번호로 조회에서 13자리 출원번호를 먼저 입력해 주세요.');
+      const no = API.normalizeApplicationNumber(raw);
+      const r = await API.testKipris(no, state.settings, { signal });
+      return r.note || '행정처리 이력 연결을 확인했습니다. 문서별 상품 이용 권한은 수집 단계에서 별도로 확인합니다.';
+    });
+  }
+  async function testGeneration(pdf) {
+    return runConnectionTest('capability-test-result', pdf ? '합성 1쪽 PDF로 입력 토큰 계산과 판독 응답을 확인합니다…' : '합성 문구로 실제 모델 호출을 확인합니다…', async signal => {
+      const result = await API.testGeneration(state.settings, { pdf, signal });
+      return result.note;
+    });
   }
 
   function setInputMode(mode) {
@@ -632,6 +690,7 @@
   });
   $('review-form').addEventListener('submit', runLive);
   $('cancel-review').addEventListener('click', () => { state.controller?.abort(); setText('stage-message', '검토를 중단하고 현재까지 확보한 자료를 정리합니다.'); });
+  $('cancel-connection').addEventListener('click', () => { if (state.connectionTest) state.controller?.abort(); });
   $('settings-form').addEventListener('submit', event => { event.preventDefault(); try { applySettings(); } catch (e) { setText('settings-feedback', safeError(e)); } });
   $('forget-keys').addEventListener('click', () => { $('kipris-key').value = ''; $('llm-key').value = ''; state.settings.kiprisKey = ''; state.settings.llmKey = ''; updateConnection(); setText('settings-feedback', '입력한 API 키를 지웠습니다.'); });
   $('test-llm').addEventListener('click', testLLM); $('test-kipris').addEventListener('click', testKipris);
@@ -670,12 +729,18 @@
   document.addEventListener('dragover', e => { if (Array.from(e.dataTransfer?.types || []).includes('Files')) e.preventDefault(); }); document.addEventListener('drop', e => { if (!dz.contains(e.target)) e.preventDefault(); });
   $('motion-toggle').addEventListener('click', () => { state.motion = !state.motion; document.body.classList.toggle('reduce-motion', !state.motion); $('motion-toggle').setAttribute('aria-pressed', String(!state.motion)); setText('motion-toggle', state.motion ? '모션 끄기' : '모션 켜기'); });
   window.addEventListener('online', updateConnection); window.addEventListener('offline', updateConnection);
+  function followLocation() {
+    const view = location.hash.slice(1);
+    if (Object.hasOwn(names, view) && view !== state.view) showView(view, true, false);
+  }
+  window.addEventListener('popstate', followLocation);
+  window.addEventListener('hashchange', followLocation);
   $('document-dialog').addEventListener('close', releasePreview);
   window.addEventListener('beforeunload', e => { if (state.busy || unsavedCases.size > 0) { e.preventDefault(); e.returnValue = ''; } });
 
   // Settings are never written to Web Storage, cookies, URLs or exported case files.
   Object.entries(state.settings).forEach(([key, value]) => { const field = $('settings-form').elements.namedItem(key); if (!field) return; if (field.type === 'checkbox') field.checked = Boolean(value); else field.value = String(value); });
   const demoChoices = el('div', 'demo-choices'); demoChoices.append(button('반려사유 예시', 'demo', 'finding'), button('발견 없음 예시', 'demo', 'clear'), button('자료 부족 예시', 'demo', 'missing')); $('demo-banner').append(demoChoices);
-  renderAll(); renderRules(); showView(location.hash.slice(1) || 'review', false); setText('token-meter', '기본 요청 예산 ' + state.settings.maxTokens.toLocaleString() + ' tokens'); renderBudgetHint();
+  renderAll(); renderRules(); showView(Object.hasOwn(names, location.hash.slice(1)) ? location.hash.slice(1) : 'review', false); setText('token-meter', '기본 요청 예산 ' + state.settings.maxTokens.toLocaleString() + ' tokens'); renderBudgetHint();
   window.ReviewApp = Object.freeze({ showView, showDemo, renderAll, getCase: () => current(), runLive, runDocuments, addFiles, importSaved, setInputMode, newCase, memoryStats, isBusy: () => state.busy });
 })();

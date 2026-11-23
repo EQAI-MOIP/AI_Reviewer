@@ -68,33 +68,83 @@
     const timer = setTimeout(() => controller.abort(), ms);
     return { signal: controller.signal, cleanup() { clearTimeout(timer); if (signal) signal.removeEventListener('abort', abort); } };
   }
-  let sessionPromise = null;
-  async function relayToken(fetcher) {
-    if (!sessionPromise) sessionPromise = (async () => {
-      const r = await fetcher('/api/session', { cache: 'no-store', credentials: 'same-origin', signal: AbortSignal.timeout(10000) });
-      if (!r.ok) fail('RELAY_UNAVAILABLE', '실행 도우미에 연결할 수 없습니다. node server.js로 실행한 주소에서 열어 주세요.');
-      const data = await r.json();
-      if (!data || typeof data.token !== 'string') fail('RELAY_UNAVAILABLE', '실행 도우미의 응답을 확인할 수 없습니다.');
-      return data.token;
-    })().catch(e => { sessionPromise = null; throw e; });
-    return sessionPromise;
+  function runtimeInfo(page = typeof location !== 'undefined' ? location : null) {
+    const protocol = page && page.protocol, hostname = page && page.hostname;
+    const local = /^https?:$/.test(protocol || '') && ['127.0.0.1', 'localhost', '[::1]'].includes(hostname);
+    return { mode: !page ? 'unknown' : local ? 'local' : protocol === 'file:' ? 'file' : 'web', canUseRelay: local };
+  }
+  async function responseBytes(response, limit) {
+    const length = Number(response.headers.get('content-length'));
+    if (Number.isFinite(length) && length > limit) {
+      try { if (response.body) await response.body.cancel(); } catch (_) { /* Already closed. */ }
+      fail('RESPONSE_SIZE', '응답이 안전한 처리 크기를 초과했습니다.');
+    }
+    let bytes;
+    if (response.body && typeof response.body.getReader === 'function') {
+      const reader = response.body.getReader(), chunks = []; let size = 0;
+      try {
+        while (true) {
+          const { done, value } = await reader.read(); if (done) break;
+          size += value.byteLength;
+          if (size > limit) { await reader.cancel(); fail('RESPONSE_SIZE', '응답이 안전한 처리 크기를 초과했습니다.'); }
+          chunks.push(value);
+        }
+      } finally { reader.releaseLock(); }
+      bytes = new Uint8Array(size); let at = 0;
+      for (const chunk of chunks) { bytes.set(chunk, at); at += chunk.byteLength; }
+    } else bytes = new Uint8Array(await response.arrayBuffer());
+    if (bytes.byteLength > limit) fail('RESPONSE_SIZE', '응답이 안전한 처리 크기를 초과했습니다.');
+    return bytes;
+  }
+  // Cache only a completed handshake. Each caller owns its cancellation signal;
+  // cancelling one pending session must not leave another caller with an aborted promise.
+  let sessionToken = null;
+  async function relayToken(fetcher, signal) {
+    abortIfNeeded(signal);
+    if (sessionToken) return sessionToken;
+    const timeout = linkAbort(signal, 10000);
+    try {
+      const r = await fetcher('/api/session', { cache: 'no-store', credentials: 'same-origin',
+        signal: timeout.signal, redirect: 'error', referrerPolicy: 'no-referrer' });
+      if (!r.ok) {
+        try { if (r.body) await r.body.cancel(); } catch (_) { /* Already closed. */ }
+        fail('RELAY_UNAVAILABLE', '실행 도우미에 연결할 수 없습니다. node server.js로 실행한 주소에서 열어 주세요.');
+      }
+      const text = new TextDecoder().decode(await responseBytes(r, 4096));
+      let data; try { data = JSON.parse(text); } catch (_) { /* A static server may return an HTML page. */ }
+      if (!data || data.runtime !== 'node-builtins' || !/^[a-f0-9]{64}$/i.test(data.token || ''))
+        fail('RELAY_UNAVAILABLE', '이 주소에서 실행 도우미를 확인할 수 없습니다. node server.js로 실행한 주소를 열거나 브라우저 직접 연결을 선택해 주세요.');
+      abortIfNeeded(timeout.signal);
+      sessionToken = data.token;
+      return sessionToken;
+    } catch (e) {
+      if (signal && signal.aborted) throw new DOMException('작업을 중지했습니다.', 'AbortError');
+      if (timeout.signal.aborted) fail('TIMEOUT', '실행 도우미의 연결 확인 시간이 초과되었습니다. 도우미 실행 상태를 확인해 주세요.');
+      if (e instanceof ReviewAPIError) throw e;
+      fail('RELAY_UNAVAILABLE', '실행 도우미에 연결할 수 없습니다. node server.js로 실행한 주소에서 열어 주세요.');
+    } finally { timeout.cleanup(); }
   }
   function usesRelay(s) {
     if (s.connectionMode === 'direct' || s.useRelay === false) return false;
     if (s.connectionMode === 'relay' || s.useRelay === true) return true;
-    return typeof location !== 'undefined' && ['127.0.0.1', 'localhost', '[::1]'].includes(location.hostname) && /^https?:$/.test(location.protocol);
+    return runtimeInfo().canUseRelay;
   }
   async function request(s, target, { signal, fetcher, method = 'GET', headers = {}, body, binary = false, relayPath, relayBody } = {}) {
     const f = fetcher || s.fetcher || globalThis.fetch;
     if (typeof f !== 'function') fail('FETCH_UNAVAILABLE', '이 브라우저는 fetch API를 지원하지 않습니다.');
     abortIfNeeded(signal);
+    const relay = usesRelay(s), runtime = runtimeInfo();
+    if (relay && runtime.mode !== 'unknown' && !runtime.canUseRelay)
+      fail('RELAY_UNAVAILABLE', '공개 사이트나 파일로 연 화면에서는 로컬 중계를 사용할 수 없습니다. 브라우저 직접 연결을 선택하거나 내려받은 앱을 node server.js로 실행한 주소에서 열어 주세요.');
     const timeout = linkAbort(signal, Number(s.timeoutMs) || 300000);
     try {
       let response;
-      if (usesRelay(s)) {
-        const token = await relayToken(f);
+      if (relay) {
+        const token = await relayToken(f, timeout.signal);
+        abortIfNeeded(timeout.signal);
         response = await f(relayPath, { method: 'POST', credentials: 'same-origin', cache: 'no-store',
-          headers: { 'Content-Type': 'application/json', 'X-Review-Token': token }, body: JSON.stringify(relayBody), signal: timeout.signal });
+          headers: { 'Content-Type': 'application/json', 'X-Review-Token': token }, body: JSON.stringify(relayBody), signal: timeout.signal,
+          redirect: 'error', referrerPolicy: 'no-referrer' });
       } else {
         response = await f(target, { method, headers, body, signal: timeout.signal, cache: 'no-store', credentials: 'omit', redirect: 'error', referrerPolicy: 'no-referrer' });
       }
@@ -104,27 +154,18 @@
         // Cancel unread failure bodies before removing our timeout. Otherwise a streamed
         // error can retain a connection and its buffers after the UI has reported failure.
         try { if (response.body) await response.body.cancel(); } catch (_) { /* Already aborted or closed. */ }
-        if (usesRelay(s) && status === 403) sessionPromise = null;
+        if (relay && status === 403) sessionToken = null;
         const m = status === 401 || status === 403 ? '인증 또는 상품 이용 권한을 확인해 주세요. 실행 도우미를 다시 시작했다면 한 번 더 실행해 주세요.' : status === 429 ? '요청 한도에 도달했습니다. 잠시 후 다시 시도해 주세요.' : status === 400 ? '요청 형식·모델 지원 기능을 확인해 주세요. 설정의 API 방식과 모델 ID가 공급자 문서와 일치해야 합니다.' : status === 404 ? '요청 경로 또는 모델을 찾지 못했습니다. Base URL, API 방식, 모델 ID를 확인해 주세요.' : status >= 500 ? '외부 서비스가 요청을 처리하지 못했습니다. 잠시 후 이 단계부터 다시 시도해 주세요.' : '서비스 요청이 실패했습니다.';
         fail('HTTP_' + status, m + ' (HTTP ' + status + ')', { status });
       }
       const limit = binary ? 30 * 1024 * 1024 : 72 * 1024 * 1024;
-      const length = Number(response.headers.get('content-length'));
-      if (Number.isFinite(length) && length > limit) { if (response.body) await response.body.cancel(); fail('RESPONSE_SIZE', '응답이 안전한 처리 크기를 초과했습니다.'); }
-      let bytes;
-      if (response.body && typeof response.body.getReader === 'function') {
-        const reader = response.body.getReader(), chunks = []; let size = 0;
-        try { while (true) { const { done, value } = await reader.read(); if (done) break; size += value.byteLength; if (size > limit) { await reader.cancel(); fail('RESPONSE_SIZE', '응답이 안전한 처리 크기를 초과했습니다.'); } chunks.push(value); } }
-        finally { reader.releaseLock(); }
-        bytes = new Uint8Array(size); let at = 0; for (const chunk of chunks) { bytes.set(chunk, at); at += chunk.byteLength; }
-      } else bytes = new Uint8Array(await response.arrayBuffer());
-      if (bytes.byteLength > limit) fail('RESPONSE_SIZE', '응답이 안전한 처리 크기를 초과했습니다.');
+      const bytes = await responseBytes(response, limit);
       return binary ? bytes : new TextDecoder().decode(bytes);
     } catch (e) {
       if (e instanceof ReviewAPIError) throw e;
       if (signal && signal.aborted) throw new DOMException('작업을 중지했습니다.', 'AbortError');
       if (timeout.signal.aborted) fail('TIMEOUT', '응답 시간이 초과되었습니다. 해당 단계는 완료되지 않았습니다.');
-      fail('NETWORK', '네트워크 또는 브라우저 CORS 제한으로 요청하지 못했습니다. 실행 도우미와 인터넷 연결을 확인해 주세요.');
+      fail('NETWORK', relay ? '실행 도우미 또는 인터넷 연결을 확인해 주세요. 요청이 완료되지 않았습니다.' : '네트워크 또는 API 제공자의 브라우저 연결 허용(CORS) 설정으로 요청하지 못했습니다. Base URL과 인터넷 연결을 확인하고, CORS를 지원하지 않으면 내려받은 앱의 로컬 실행 도우미를 사용해 주세요.');
     } finally { timeout.cleanup(); }
   }
   function decodeEntities(s) {
@@ -465,6 +506,7 @@
       body: kind === 'models' ? undefined : JSON.stringify(payload), relayPath: '/api/llm',
       relayBody: { url, key: s.llmKey || '', kind, payload, timeoutMs: s.timeoutMs, allowLocalLLM: ['localhost', '127.0.0.1', '[::1]'].includes(new URL(url).hostname) } });
     let data; try { data = JSON.parse(text); } catch (_) { fail('LLM_JSON', 'LLM 서버의 응답이 JSON이 아닙니다. Base URL과 API 방식을 확인해 주세요.'); }
+    if (!data || typeof data !== 'object' || Array.isArray(data)) fail('LLM_JSON', 'LLM 서버의 응답 구조가 올바르지 않습니다. Base URL과 API 방식을 확인해 주세요.');
     if (data.error) fail('LLM_REMOTE', 'LLM 서버가 오류를 반환했습니다. 모델 권한과 API 설정을 확인해 주세요.');
     return data;
   }
@@ -524,7 +566,9 @@
   async function testConnection(settings, options = {}) {
     const s = settingsOf(settings);
     const data = await jsonRequest(s, 'models', undefined, options);
-    const models = Array.isArray(data.data) ? data.data.map(x => x.id).filter(x => typeof x === 'string') : [];
+    if (!Array.isArray(data.data) || data.data.some(x => !x || typeof x.id !== 'string' || !x.id.trim()))
+      fail('LLM_MODELS', '모델 목록 형식의 응답을 확인하지 못했습니다. Base URL과 제공자의 /models 지원 여부를 확인해 주세요.');
+    const models = data.data.map(x => x.id);
     return { connected: true, models, modelAvailable: s.model ? models.includes(s.model) : null,
       note: '모델 목록 연결 확인입니다. 실제 PDF·분석 호출 가능 여부는 별도입니다.' };
   }
@@ -606,6 +650,6 @@
     return result;
   }
   return { defaults, PATHS, ReviewAPIError, normalizeApplicationNumber, estimateTokens, endpointURL, parseXML, documentType, suggestDocumentMetadata,
-    reconstructClaims, collect, collectCitedOriginal, parseCitedIdentifier, callLLM, testConnection, testGeneration, testKipris, sha256, bytesBase64, redact, safePDFURL, parseJSON, usesRelay,
-    _queryAll: queryAll, _resetSession() { sessionPromise = null; } };
+    reconstructClaims, collect, collectCitedOriginal, parseCitedIdentifier, callLLM, testConnection, testGeneration, testKipris, sha256, bytesBase64, redact, safePDFURL, parseJSON, usesRelay, runtimeInfo,
+    _queryAll: queryAll, _resetSession() { sessionToken = null; } };
 });

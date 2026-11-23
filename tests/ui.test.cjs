@@ -161,7 +161,7 @@ function fixtureCase(scenario) {
   if (scenario === 'missing') c.failures.push({stage:'문서',message:'합성 서류 일부 미확보'});
   c.coverage = [{ruleId:'RC-07',status:'checked',documentId:'d1'}]; return c;
 }
-function harness(overrides = {}) {
+function harness(overrides = {}, options = {}) {
   const document = new MiniDocument(html), windowEvents = new Map(), blobURLs = new Map(), recorded = { ingest:[], serialize:[] };
   let objectSequence = 0;
   class TestURL extends URL {}
@@ -177,17 +177,18 @@ function harness(overrides = {}) {
     serializeCase(c, ...rest) { recorded.serialize.push([c, ...rest]); return { applicationNumber:c.applicationNumber,documents:c.documents,findings:c.findings,mode:c.mode,status:c.status }; },
     makeReport(c) { return '# 검토 내역\n' + c.summary; }, ...overrides
   };
-  const api = {...RealAPI, usesRelay:() => false, testConnection:async() => ({models:['local-test'],modelAvailable:true,note:'모의 모델 목록'})};
+  const api = {...RealAPI, usesRelay:() => false, testConnection:async() => ({models:['local-test'],modelAvailable:true,note:'모의 모델 목록'}), ...options.api};
   const window = { ReviewAPI:api, ReviewRules:Rules, ReviewEngine:engine, scrollTo() {}, addEventListener(type, fn) { if (!windowEvents.has(type)) windowEvents.set(type, []); windowEvents.get(type).push(fn); } };
-  const location = { hash:'', protocol:'file:', hostname:'' };
-  const sandbox = { window, document, navigator:{onLine:true}, location, history:{replaceState(a,b,hash) { location.hash = hash; }}, FormData:MiniFormData,
+  const location = { hash:'', protocol:'file:', hostname:'', ...options.location }, historyCalls = [];
+  const sandbox = { window, document, navigator:{onLine:true}, location, history:{replaceState(a,b,hash) { location.hash = hash; historyCalls.push(['replace', hash]); }, pushState(a,b,hash) { location.hash = hash; historyCalls.push(['push', hash]); }}, FormData:MiniFormData,
     File, Blob, URL:TestURL, AbortController, DOMException, TextEncoder, TextDecoder, console, setTimeout:() => 1, clearTimeout() {}, requestAnimationFrame:fn => fn() };
   vm.runInNewContext(appSource, sandbox, {filename:'js/app.js'});
   const $ = id => document.getElementById(id);
-  return {document,window,app:window.ReviewApp,$,engine,recorded,blobURLs,click:node => (typeof node === 'string' ? $(node) : node).click(),
+  return {document,window,app:window.ReviewApp,$,engine,recorded,blobURLs,location,historyCalls,click:node => (typeof node === 'string' ? $(node) : node).click(),
     submit:node => document.dispatch('submit', typeof node === 'string' ? $(node) : node),
     event:(type,node,extra) => document.dispatch(type,typeof node === 'string' ? $(node) : node,extra),
-    beforeUnload() { const e = {defaultPrevented:false,preventDefault() {this.defaultPrevented=true;}}; for (const fn of windowEvents.get('beforeunload') || []) fn(e); return e; }
+    beforeUnload() { const e = {defaultPrevented:false,preventDefault() {this.defaultPrevented=true;}}; for (const fn of windowEvents.get('beforeunload') || []) fn(e); return e; },
+    navigate(hash, type = 'popstate') { location.hash = hash; for (const fn of windowEvents.get(type) || []) fn({ type }); }
   };
 }
 
@@ -556,4 +557,67 @@ test('v3 manual memory purge clears demo backup as well as the visible synthetic
   await h.submit('manual-document-form');const prior=h.app.getCase();h.app.showDemo();
   await h.click('purge-case');assert.equal(h.app.getCase(),null);assert.equal(prior.disposed,true);assert.equal(h.app.memoryStats().documents,0);
   await h.click('exit-demo');assert.equal(h.app.getCase(),null);
+});
+
+test('public hosting labels and settings refuse the unavailable local relay', async () => {
+  const h = harness({}, {location:{protocol:'https:',hostname:'aireviewer.moip.ai.kr'}});
+  assert.equal(h.$('connection-label').textContent, '웹에서 사용 중');
+  assert.equal(h.$('hosting-notice').hidden, false);
+  assert.equal(h.$('hosting-settings-message').hidden, false);
+  assert.match(h.$('hosting-settings-message').textContent, /CORS/);
+  assert.match(h.$('hosting-settings-message').textContent, /중계 서버가 없습니다/);
+  assert(h.$('connection-mode').querySelector('option[value="relay"]').disabled);
+  h.$('connection-mode').value = 'relay';
+  await h.submit('settings-form');
+  assert.match(h.$('settings-feedback').textContent, /로컬 중계를 사용할 수 없습니다/);
+});
+
+test('public navigation supports deep links, browser back, and hash changes without losing a case', async () => {
+  const h = harness({}, {location:{hash:'#documents',protocol:'https:',hostname:'aireviewer.moip.ai.kr'}});
+  assert.equal(h.$('view-documents').hidden, false);
+  h.$('document-name').value = '합성 검토 문서';
+  h.$('document-text').value = '탭을 이동하더라도 준비한 문서의 내용은 유지되어야 합니다.';
+  await h.submit('manual-document-form');
+  const c = h.app.getCase();
+  await h.click(h.document.querySelector('.nav-item[data-view="settings"]'));
+  assert.deepEqual(h.historyCalls.at(-1), ['push', '#settings']);
+  const count = h.historyCalls.length;
+  h.navigate('#documents');
+  assert.equal(h.$('view-documents').hidden, false);
+  assert.equal(h.app.getCase(), c);
+  assert.equal(h.historyCalls.length, count, 'history traversal must not create another history entry');
+  h.navigate('#rules', 'hashchange');
+  assert.equal(h.$('view-rules').hidden, false);
+  assert.equal(h.document.title, '검토 규칙 · AI 심사팀장 큐리');
+  for (const hash of ['#unknown', '#constructor', '#toString', '#__proto__']) {
+    const invalid = harness({}, {location:{hash}});
+    assert.equal(invalid.$('view-review').hidden, false);
+    assert.equal(invalid.location.hash, '#review');
+    invalid.navigate(hash, 'hashchange');
+    assert.equal(invalid.$('view-review').hidden, false);
+  }
+});
+
+test('model connection checks lock competing work and can be cancelled from settings', async () => {
+  let calls = 0, signal;
+  const h = harness({}, {api:{testConnection:async (settings, options) => {
+    calls++; signal = options.signal;
+    return new Promise((resolve, reject) => signal.addEventListener('abort', () => reject(new DOMException('cancelled', 'AbortError')), {once:true}));
+  }}});
+  const pending = h.click('test-llm');
+  assert.equal(h.app.isBusy(), true);
+  assert.equal(h.$('settings-form').getAttribute('aria-busy'), 'true');
+  assert.equal(h.$('cancel-connection').hidden, false);
+  assert.equal(h.$('save-settings').disabled, true);
+  assert.equal(h.$('home-upload-button').disabled, true);
+  await h.click('test-llm');
+  assert.equal(calls, 1);
+  await h.click('cancel-connection');
+  await pending;
+  assert(signal.aborted);
+  assert.equal(h.app.isBusy(), false);
+  assert.equal(h.$('cancel-connection').hidden, true);
+  assert.equal(h.$('save-settings').disabled, false);
+  assert.match(h.$('llm-test-result').textContent, /중단했습니다/);
+  assert.equal(h.$('available-models'), null, 'cancelled checks must not populate model suggestions');
 });
