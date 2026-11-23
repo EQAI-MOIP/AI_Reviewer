@@ -50,12 +50,16 @@ Node.js 22 이상에서 다음 명령을 실행한다. 앱 사용에는 npm 설�
 
 ```bash
 node scripts/check-site.cjs
+node scripts/version-assets.cjs
+node scripts/version-assets.cjs --check
 node --test tests/*.test.cjs
 node scripts/checksums.cjs
 node scripts/checksums.cjs --check
 ```
 
-`check-site.cjs`는 HTML의 실행 자원과 CSS 이미지 경로가 존재하는지, 프로젝트 경로에서도 쓸 수 있는 상대 경로인지, JavaScript와 동봉 JSON의 구문이 유효한지 검사한다. 체크섬 도구는 Git이 추적하거나 추가할 수 있는 파일을 대상으로 `SHA256SUMS.txt`를 만든다. 체크섬 파일 자체는 제외한다. 소스를 최종 수정한 뒤 체크섬을 갱신한다.
+`check-site.cjs`는 HTML의 실행 자원과 CSS 이미지 경로가 존재하는지, 프로젝트 경로에서도 쓸 수 있는 상대 경로인지, JavaScript와 동봉 JSON의 구문이 유효한지 검사한다. `version-assets.cjs`는 `index.html`의 로컬 스크립트와 스타일시트 주소에 해당 파일의 SHA-256 앞 12자리를 `v` 쿼리로 붙인다. 파일 내용이 바뀌면 요청 주소도 바뀌어 새 화면과 이전 스크립트가 섞이는 캐시 문제를 줄인다. 상대 경로와 기존 쿼리·URL 조각은 유지하고 외부 주소는 수정하거나 요청하지 않는다. `--check`는 파일을 수정하지 않고 해시가 최신인지 확인한다.
+
+체크섬 도구는 Git이 추적하거나 추가할 수 있는 파일을 대상으로 `SHA256SUMS.txt`를 만든다. 체크섬 파일 자체는 제외한다. 소스를 최종 수정한 뒤 **자원 버전 갱신 → 체크섬 갱신** 순서로 실행한다. CI는 오래된 자원 해시나 체크섬을 오류로 처리한다.
 
 `Validate public site` 워크플로는 main 푸시, main 대상 PR, 수동 실행에서 같은 검사를 수행한다. Node.js 22와 Python 3.12를 사용하며 API 키나 실문서를 요구하지 않는다. Python은 HWPX·DOCX XML 시험의 어댑터에만 사용된다. 선택적 네이티브 브라우저 시험은 기본 CI에 포함되지 않으며 시험 결과에서 건너뜀으로 표시된다.
 

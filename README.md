@@ -133,11 +133,12 @@ PDF 전사는 모델의 오류 가능성이 있으므로 전사 뒤에도 원문
 
 ```bash
 node scripts/check-site.cjs
+node scripts/version-assets.cjs --check
 node scripts/checksums.cjs --check
 node --test tests/*.test.cjs
 ```
 
-소스를 변경한 경우 `node scripts/checksums.cjs`로 체크섬을 갱신한 뒤 다시 검사합니다. 현재 브랜치 게시 방식에서 자동 검사는 Pages 배포와 별도로 실행됩니다. 검사가 성공한 변경을 병합하고, 게시 후에는 Pages 배포 결과도 확인해야 합니다.
+소스를 변경한 경우 `node scripts/version-assets.cjs`로 CSS·JavaScript 주소의 내용 해시를 갱신하고, 이어서 `node scripts/checksums.cjs`로 체크섬을 갱신한 뒤 다시 검사합니다. 변경된 파일은 새 주소로 요청하므로 이전 스크립트가 새 화면과 섞이는 브라우저 캐시 문제를 줄입니다. 현재 브랜치 게시 방식에서 자동 검사는 Pages 배포와 별도로 실행됩니다. 검사가 성공한 변경을 병합하고, 게시 후에는 Pages 배포 결과도 확인해야 합니다.
 
 기본 시험은 Node.js 기본 모듈을 사용합니다. HWPX·DOCX XML 어댑터 시험은 Python 표준 라이브러리를 선택적으로 사용하며 없으면 해당 시험만 건너뜁니다. 네이티브 Chromium 시험은 Playwright 개발 도구가 설치된 시험 환경에서 `QURI_NATIVE_PARSER_TESTS=1`로 별도 선택합니다. 앱 사용에는 Python·Playwright·npm 설치가 필요하지 않습니다.
 

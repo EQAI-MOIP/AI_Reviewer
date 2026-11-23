@@ -199,9 +199,10 @@ test('actual HTML exposes all controller IDs and only existing local executable/
   const dynamic = new Set([...appSource.matchAll(/\.id\s*=\s*'([^']+)'/g)].map(m => m[1]));
   for (const [,id] of appSource.matchAll(/\$\('([^']+)'\)/g)) assert(d.getElementById(id) || dynamic.has(id),'missing controller element ' + id);
   for (const label of d.querySelectorAll('label[for]')) assert(d.getElementById(label.getAttribute('for')),'unbound label ' + label.getAttribute('for'));
-  const scripts = d.querySelectorAll('script[src]').map(n => n.getAttribute('src'));
+  const localPath = resource => resource.split(/[?#]/, 1)[0];
+  const scripts = d.querySelectorAll('script[src]').map(n => localPath(n.getAttribute('src')));
   assert.deepEqual(scripts,['js/rules-data.js','js/parsers.js','js/api.js','js/engine.js','js/app.js','js/quri-guide.js']);
-  const resources = [...scripts,...d.querySelectorAll('link[href]').map(n => n.getAttribute('href')),...d.querySelectorAll('img[src]').map(n => n.getAttribute('src'))];
+  const resources = [...scripts,...d.querySelectorAll('link[href]').map(n => localPath(n.getAttribute('href'))),...d.querySelectorAll('img[src]').map(n => localPath(n.getAttribute('src')))];
   for (const stylesheet of resources.filter(resource=>/\.css$/i.test(resource))) {
     const css=fs.readFileSync(path.join(ROOT,stylesheet),'utf8');
     assert(!/@import\b/i.test(css),'external CSS imports are forbidden');

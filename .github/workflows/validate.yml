@@ -33,6 +33,8 @@ jobs:
           python-version: '3.12'
       - name: Check static site paths and JavaScript syntax
         run: node scripts/check-site.cjs
+      - name: Verify content-based asset versions
+        run: node scripts/version-assets.cjs --check
       - name: Verify release checksums
         run: node scripts/checksums.cjs --check
       - name: Run regression tests
