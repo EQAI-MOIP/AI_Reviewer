@@ -131,6 +131,8 @@ PDF 전사는 모델의 오류 가능성이 있으므로 전사 뒤에도 원문
 
 기존 v3 검증 기록은 `docs/VALIDATION.md`, 기계 판독용 결과는 `tests/validation-results.json`에 있습니다. 해당 기록은 v3 제작 당시의 결과이며 이후 변경의 자동 검사 결과는 저장소의 **Actions → Validate public site**에서 커밋별로 확인합니다. 단위시험·DOM 이벤트 시험, 실제 브라우저 렌더링과 실 API 검증은 서로 다른 범위입니다.
 
+2026-11-23 공개판은 [공개 사이트 개선·검증 기록](docs/validation/public-site/README.md)에 변경 내용, 자동 검사와 실제 HTTPS 사이트의 화면·합성 문서 추가·사건/보고서 저장 확인, 전후 화면을 정리했습니다.
+
 ```bash
 node scripts/check-site.cjs
 node scripts/version-assets.cjs --check

@@ -77,6 +77,8 @@
     setText('connection-mode-help', runtime.canUseRelay ? '자동 연결은 로컬 실행 도우미를 사용합니다. 직접 연결은 API 제공자의 CORS 허용이 필요합니다.' : '이 화면에서는 자동·직접 연결 모두 브라우저에서 API에 연결합니다. 로컬 중계는 내려받은 앱의 실행 도우미에서 사용할 수 있습니다.');
     const relayOption = $('connection-mode').querySelector('option[value="relay"]');
     if (relayOption) relayOption.disabled = !runtime.canUseRelay;
+    const autoOption = $('connection-mode').querySelector('option[value="auto"]');
+    if (autoOption) autoOption.textContent = runtime.canUseRelay ? '자동 · 로컬 실행 도우미' : '자동 · 브라우저 직접 연결';
   }
 
   function readSettings() {
@@ -111,7 +113,7 @@
     for (const id of ['demo-button', 'document-files', 'home-document-files', 'home-upload-button', 'upload-document-type', 'start-paste', 'mode-manual', 'mode-live', 'manual-case-number', 'import-case-button', 'application-number', 'save-settings', 'test-llm', 'test-kipris', 'test-text-generation', 'test-pdf-generation', 'forget-keys', 'purge-case', 'storage-new-case']) if ($(id)) $(id).disabled = value;
     document.querySelectorAll('[data-token-profile]').forEach(n => { n.disabled = value; });
     $('manual-document-form').querySelectorAll('input,select,textarea,button').forEach(n => { n.disabled = value; });
-    $('settings-form').querySelectorAll('input,select').forEach(n => { n.disabled = value; });
+    $('settings-form').querySelectorAll('input,select,button').forEach(n => { n.disabled = value && n.id !== 'cancel-connection'; });
     $('review-documents').disabled = value || !current()?.documents?.length;
     $('clear-documents').disabled = value || !current()?.documents?.length;
     $('export-case').disabled = value || !current(); $('export-report').disabled = value || !current();

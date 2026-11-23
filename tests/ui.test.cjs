@@ -568,6 +568,7 @@ test('public hosting labels and settings refuse the unavailable local relay', as
   assert.match(h.$('hosting-settings-message').textContent, /CORS/);
   assert.match(h.$('hosting-settings-message').textContent, /중계 서버가 없습니다/);
   assert(h.$('connection-mode').querySelector('option[value="relay"]').disabled);
+  assert.equal(h.$('connection-mode').querySelector('option[value="auto"]').textContent, '자동 · 브라우저 직접 연결');
   h.$('connection-mode').value = 'relay';
   await h.submit('settings-form');
   assert.match(h.$('settings-feedback').textContent, /로컬 중계를 사용할 수 없습니다/);
@@ -610,6 +611,7 @@ test('model connection checks lock competing work and can be cancelled from sett
   assert.equal(h.$('settings-form').getAttribute('aria-busy'), 'true');
   assert.equal(h.$('cancel-connection').hidden, false);
   assert.equal(h.$('save-settings').disabled, true);
+  assert.equal(h.$('save-settings-top').disabled, true);
   assert.equal(h.$('home-upload-button').disabled, true);
   await h.click('test-llm');
   assert.equal(calls, 1);
@@ -619,6 +621,7 @@ test('model connection checks lock competing work and can be cancelled from sett
   assert.equal(h.app.isBusy(), false);
   assert.equal(h.$('cancel-connection').hidden, true);
   assert.equal(h.$('save-settings').disabled, false);
+  assert.equal(h.$('save-settings-top').disabled, false);
   assert.match(h.$('llm-test-result').textContent, /중단했습니다/);
   assert.equal(h.$('available-models'), null, 'cancelled checks must not populate model suggestions');
 });
